@@ -1,0 +1,7 @@
+supervisor_mode,autonomy_mode,condition_label,ai_wins,baseline_wins,ties,ai_accepted,ai_overridden,weak_recommendations,normal_recommendations,strong_recommendations,mean_executed_utility,mean_ai_confidence,mean_intervention_score,final_trust,trust_variance,filename,accept_rate,override_rate,weak_rate,normal_rate,strong_rate
+calibrated,adaptive,calibrated_adaptive,47,46,7,36,64,0,99,1,71.82,0.779,0.556,0.505,0.00255,calibrated_adaptive.txt,0.36,0.64,0.0,0.99,0.01
+calibrated,fixed,calibrated_fixed,47,46,7,36,64,0,100,0,71.82,0.779,0.779,0.505,0.00255,calibrated_fixed.txt,0.36,0.64,0.0,1.0,0.0
+overtrust,adaptive,overtrust_adaptive,47,46,7,63,37,61,39,0,72.74,0.779,0.439,0.505,0.00255,overtrust_adaptive.txt,0.63,0.37,0.61,0.39,0.0
+overtrust,fixed,overtrust_fixed,47,46,7,92,8,0,100,0,72.33,0.779,0.779,0.505,0.00255,overtrust_fixed.txt,0.92,0.08,0.0,1.0,0.0
+undertrust,adaptive,undertrust_adaptive,47,46,7,22,78,0,72,28,72.55,0.779,0.632,0.505,0.00255,undertrust_adaptive.txt,0.22,0.78,0.0,0.72,0.28
+undertrust,fixed,undertrust_fixed,47,46,7,13,87,0,100,0,72.21,0.779,0.779,0.505,0.00255,undertrust_fixed.txt,0.13,0.87,0.0,1.0,0.0

@@ -1,0 +1,74 @@
+Total records: 68485
+
+Incident Types:
+incident_type
+Severe Storm           19267
+Hurricane              13721
+Flood                  11204
+Biological              7857
+Fire                    3843
+Snowstorm               3707
+Severe Ice Storm        2956
+Tornado                 1623
+Drought                 1292
+Tropical Storm          1059
+Coastal Storm            637
+Other                    313
+Freezing                 301
+Earthquake               228
+Winter Storm             149
+Typhoon                  130
+Volcanic Eruption         51
+Mud/Landslide             44
+Fishing Losses            42
+Dam/Levee Break           13
+Toxic Substances           9
+Tsunami                    9
+Chemical                   9
+Human Cause                7
+Tropical Depression        7
+Terrorist                  5
+Straight-Line Winds        2
+Name: count, dtype: int64
+
+Duration statistics (non-negative only):
+count    67961.000000
+mean       159.501950
+std        380.548212
+min          0.000000
+25%          3.000000
+50%         13.000000
+75%         40.000000
+max       5117.000000
+Name: duration_days, dtype: float64
+
+Median duration by incident type:
+incident_type
+Biological             1207.0
+Earthquake               38.0
+Fire                     27.0
+Coastal Storm            25.0
+Tropical Storm           18.0
+Severe Storm             13.0
+Hurricane                13.0
+Flood                    11.0
+Chemical                 11.0
+Severe Ice Storm         10.0
+Terrorist                 7.0
+Dam/Levee Break           6.0
+Mud/Landslide             6.0
+Snowstorm                 4.0
+Winter Storm              3.0
+Freezing                  3.0
+Other                     2.0
+Tropical Depression       1.0
+Typhoon                   1.0
+Human Cause               0.0
+Straight-Line Winds       0.0
+Fishing Losses            0.0
+Tornado                   0.0
+Toxic Substances          0.0
+Drought                   0.0
+Tsunami                   0.0
+Volcanic Eruption         0.0
+Name: duration_days, dtype: float64

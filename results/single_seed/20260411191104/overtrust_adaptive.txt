@@ -1,0 +1,125 @@
+=== TRUST-AWARE ADAPTIVE AUTONOMY EXPERIMENT ===
+Timestamp: 2026-04-11 19:11:04.375349
+Episodes: 100
+Supervisor mode: overtrust
+Autonomy mode: adaptive
+
+Episode 1: baseline=50, ai=75, comparison=AI_WIN, trust=0.600, confidence=0.767, override_rate=0.500, intervention=0.504, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=75
+Episode 2: baseline=57, ai=74, comparison=AI_WIN, trust=0.667, confidence=0.796, override_rate=0.400, intervention=0.471, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=57
+Episode 3: baseline=39, ai=67, comparison=AI_WIN, trust=0.714, confidence=0.727, override_rate=0.500, intervention=0.506, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=67
+Episode 4: baseline=95, ai=57, comparison=BASELINE_WIN, trust=0.625, confidence=0.751, override_rate=0.429, intervention=0.458, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=95
+Episode 5: baseline=61, ai=57, comparison=BASELINE_WIN, trust=0.556, confidence=0.780, override_rate=0.500, intervention=0.501, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=57
+Episode 6: baseline=79, ai=46, comparison=BASELINE_WIN, trust=0.500, confidence=0.743, override_rate=0.444, intervention=0.438, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=79
+Episode 7: baseline=54, ai=59, comparison=AI_WIN, trust=0.545, confidence=0.749, override_rate=0.500, intervention=0.484, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=59
+Episode 8: baseline=60, ai=90, comparison=AI_WIN, trust=0.583, confidence=0.780, override_rate=0.455, intervention=0.479, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=90
+Episode 9: baseline=108, ai=70, comparison=BASELINE_WIN, trust=0.538, confidence=0.734, override_rate=0.417, intervention=0.425, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=70
+Episode 10: baseline=72, ai=66, comparison=BASELINE_WIN, trust=0.500, confidence=0.783, override_rate=0.385, intervention=0.422, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=72
+Episode 11: baseline=75, ai=95, comparison=AI_WIN, trust=0.533, confidence=0.802, override_rate=0.429, intervention=0.465, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=95
+Episode 12: baseline=92, ai=105, comparison=AI_WIN, trust=0.562, confidence=0.778, override_rate=0.400, intervention=0.441, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=105
+Episode 13: baseline=86, ai=74, comparison=BASELINE_WIN, trust=0.529, confidence=0.669, override_rate=0.375, intervention=0.365, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=86
+Episode 14: baseline=36, ai=59, comparison=AI_WIN, trust=0.556, confidence=0.721, override_rate=0.412, intervention=0.419, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=59
+Episode 15: baseline=67, ai=52, comparison=BASELINE_WIN, trust=0.526, confidence=0.852, override_rate=0.389, intervention=0.465, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=52
+Episode 16: baseline=44, ai=61, comparison=AI_WIN, trust=0.550, confidence=0.682, override_rate=0.368, intervention=0.372, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=44
+Episode 17: baseline=51, ai=37, comparison=BASELINE_WIN, trust=0.524, confidence=0.813, override_rate=0.400, intervention=0.451, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=37
+Episode 18: baseline=81, ai=64, comparison=BASELINE_WIN, trust=0.500, confidence=0.719, override_rate=0.381, intervention=0.388, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=64
+Episode 19: baseline=85, ai=113, comparison=AI_WIN, trust=0.522, confidence=0.676, override_rate=0.364, intervention=0.361, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=85
+Episode 20: baseline=100, ai=111, comparison=AI_WIN, trust=0.542, confidence=0.790, override_rate=0.391, intervention=0.438, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=100
+Episode 21: baseline=53, ai=65, comparison=AI_WIN, trust=0.560, confidence=0.852, override_rate=0.417, intervention=0.488, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=65
+Episode 22: baseline=57, ai=66, comparison=AI_WIN, trust=0.577, confidence=0.804, override_rate=0.400, intervention=0.458, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=66
+Episode 23: baseline=75, ai=60, comparison=BASELINE_WIN, trust=0.556, confidence=0.738, override_rate=0.385, intervention=0.411, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=75
+Episode 24: baseline=93, ai=93, comparison=TIE, trust=0.556, confidence=0.765, override_rate=0.407, intervention=0.438, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=93
+Episode 25: baseline=96, ai=92, comparison=BASELINE_WIN, trust=0.536, confidence=0.769, override_rate=0.429, intervention=0.449, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=96
+Episode 26: baseline=75, ai=77, comparison=AI_WIN, trust=0.552, confidence=0.806, override_rate=0.448, intervention=0.482, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=77
+Episode 27: baseline=71, ai=55, comparison=BASELINE_WIN, trust=0.533, confidence=0.866, override_rate=0.433, intervention=0.500, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=55
+Episode 28: baseline=61, ai=54, comparison=BASELINE_WIN, trust=0.516, confidence=0.790, override_rate=0.419, intervention=0.450, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=54
+Episode 29: baseline=59, ai=68, comparison=AI_WIN, trust=0.531, confidence=0.744, override_rate=0.406, intervention=0.422, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=68
+Episode 30: baseline=79, ai=77, comparison=BASELINE_WIN, trust=0.515, confidence=0.758, override_rate=0.394, intervention=0.419, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=79
+Episode 31: baseline=74, ai=92, comparison=AI_WIN, trust=0.529, confidence=0.838, override_rate=0.412, intervention=0.472, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=92
+Episode 32: baseline=41, ai=70, comparison=AI_WIN, trust=0.543, confidence=0.664, override_rate=0.400, intervention=0.380, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=41
+Episode 33: baseline=57, ai=75, comparison=AI_WIN, trust=0.556, confidence=0.762, override_rate=0.417, intervention=0.442, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=75
+Episode 34: baseline=63, ai=75, comparison=AI_WIN, trust=0.568, confidence=0.779, override_rate=0.405, intervention=0.446, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=63
+Episode 35: baseline=54, ai=82, comparison=AI_WIN, trust=0.579, confidence=0.710, override_rate=0.421, intervention=0.423, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=54
+Episode 36: baseline=77, ai=95, comparison=AI_WIN, trust=0.590, confidence=0.804, override_rate=0.436, intervention=0.482, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=95
+Episode 37: baseline=68, ai=68, comparison=TIE, trust=0.590, confidence=0.907, override_rate=0.425, intervention=0.526, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=68
+Episode 38: baseline=87, ai=65, comparison=BASELINE_WIN, trust=0.575, confidence=0.834, override_rate=0.415, intervention=0.481, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=65
+Episode 39: baseline=83, ai=87, comparison=AI_WIN, trust=0.585, confidence=0.852, override_rate=0.405, intervention=0.486, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=87
+Episode 40: baseline=71, ai=87, comparison=AI_WIN, trust=0.595, confidence=0.741, override_rate=0.395, intervention=0.427, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=71
+Episode 41: baseline=56, ai=76, comparison=AI_WIN, trust=0.605, confidence=0.802, override_rate=0.409, intervention=0.467, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=76
+Episode 42: baseline=106, ai=80, comparison=BASELINE_WIN, trust=0.591, confidence=0.767, override_rate=0.400, intervention=0.442, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=106
+Episode 43: baseline=111, ai=84, comparison=BASELINE_WIN, trust=0.578, confidence=0.855, override_rate=0.413, intervention=0.491, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=84
+Episode 44: baseline=55, ai=58, comparison=AI_WIN, trust=0.587, confidence=0.772, override_rate=0.404, intervention=0.446, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=58
+Episode 45: baseline=46, ai=20, comparison=BASELINE_WIN, trust=0.574, confidence=0.810, override_rate=0.396, intervention=0.458, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=20
+Episode 46: baseline=46, ai=27, comparison=BASELINE_WIN, trust=0.562, confidence=0.732, override_rate=0.388, intervention=0.411, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=46
+Episode 47: baseline=43, ai=71, comparison=AI_WIN, trust=0.571, confidence=0.758, override_rate=0.400, intervention=0.433, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=71
+Episode 48: baseline=101, ai=87, comparison=BASELINE_WIN, trust=0.560, confidence=0.808, override_rate=0.392, intervention=0.451, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=87
+Episode 49: baseline=82, ai=73, comparison=BASELINE_WIN, trust=0.549, confidence=0.805, override_rate=0.385, intervention=0.443, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=82
+Episode 50: baseline=52, ai=82, comparison=AI_WIN, trust=0.558, confidence=0.796, override_rate=0.396, intervention=0.447, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=52
+Episode 51: baseline=91, ai=91, comparison=TIE, trust=0.558, confidence=0.790, override_rate=0.407, intervention=0.451, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=91
+Episode 52: baseline=93, ai=93, comparison=TIE, trust=0.558, confidence=0.852, override_rate=0.400, intervention=0.478, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=93
+Episode 53: baseline=92, ai=92, comparison=TIE, trust=0.558, confidence=0.853, override_rate=0.393, intervention=0.474, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=92
+Episode 54: baseline=79, ai=92, comparison=AI_WIN, trust=0.566, confidence=0.830, override_rate=0.386, intervention=0.460, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=92
+Episode 55: baseline=82, ai=63, comparison=BASELINE_WIN, trust=0.556, confidence=0.771, override_rate=0.379, intervention=0.424, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=63
+Episode 56: baseline=108, ai=53, comparison=BASELINE_WIN, trust=0.545, confidence=0.854, override_rate=0.373, intervention=0.460, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=53
+Episode 57: baseline=82, ai=77, comparison=BASELINE_WIN, trust=0.536, confidence=0.818, override_rate=0.367, intervention=0.436, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=77
+Episode 58: baseline=60, ai=58, comparison=BASELINE_WIN, trust=0.526, confidence=0.856, override_rate=0.361, intervention=0.449, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=60
+Episode 59: baseline=69, ai=80, comparison=AI_WIN, trust=0.534, confidence=0.817, override_rate=0.371, intervention=0.438, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=69
+Episode 60: baseline=79, ai=60, comparison=BASELINE_WIN, trust=0.525, confidence=0.744, override_rate=0.381, intervention=0.406, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=79
+Episode 61: baseline=73, ai=58, comparison=BASELINE_WIN, trust=0.517, confidence=0.787, override_rate=0.391, intervention=0.431, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=58
+Episode 62: baseline=39, ai=79, comparison=AI_WIN, trust=0.525, confidence=0.798, override_rate=0.385, intervention=0.435, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=39
+Episode 63: baseline=38, ai=50, comparison=AI_WIN, trust=0.532, confidence=0.769, override_rate=0.394, intervention=0.427, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=50
+Episode 64: baseline=64, ai=39, comparison=BASELINE_WIN, trust=0.524, confidence=0.694, override_rate=0.388, intervention=0.385, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=64
+Episode 65: baseline=26, ai=80, comparison=AI_WIN, trust=0.531, confidence=0.616, override_rate=0.397, intervention=0.352, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=80
+Episode 66: baseline=88, ai=69, comparison=BASELINE_WIN, trust=0.523, confidence=0.870, override_rate=0.391, intervention=0.474, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=69
+Episode 67: baseline=91, ai=72, comparison=BASELINE_WIN, trust=0.515, confidence=0.708, override_rate=0.386, intervention=0.388, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=91
+Episode 68: baseline=97, ai=78, comparison=BASELINE_WIN, trust=0.507, confidence=0.825, override_rate=0.394, intervention=0.450, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=78
+Episode 69: baseline=105, ai=75, comparison=BASELINE_WIN, trust=0.500, confidence=0.796, override_rate=0.389, intervention=0.431, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=105
+Episode 70: baseline=60, ai=61, comparison=AI_WIN, trust=0.507, confidence=0.724, override_rate=0.397, intervention=0.402, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=60
+Episode 71: baseline=91, ai=68, comparison=BASELINE_WIN, trust=0.500, confidence=0.743, override_rate=0.405, intervention=0.415, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=91
+Episode 72: baseline=39, ai=35, comparison=BASELINE_WIN, trust=0.493, confidence=0.783, override_rate=0.413, intervention=0.438, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=39
+Episode 73: baseline=86, ai=92, comparison=AI_WIN, trust=0.500, confidence=0.782, override_rate=0.421, intervention=0.444, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=86
+Episode 74: baseline=83, ai=80, comparison=BASELINE_WIN, trust=0.493, confidence=0.796, override_rate=0.429, intervention=0.454, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=80
+Episode 75: baseline=81, ai=84, comparison=AI_WIN, trust=0.500, confidence=0.802, override_rate=0.423, intervention=0.455, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=84
+Episode 76: baseline=62, ai=56, comparison=BASELINE_WIN, trust=0.493, confidence=0.707, override_rate=0.418, intervention=0.403, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=56
+Episode 77: baseline=72, ai=88, comparison=AI_WIN, trust=0.500, confidence=0.837, override_rate=0.412, intervention=0.466, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=88
+Episode 78: baseline=90, ai=90, comparison=TIE, trust=0.500, confidence=0.791, override_rate=0.407, intervention=0.440, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=90
+Episode 79: baseline=63, ai=51, comparison=BASELINE_WIN, trust=0.494, confidence=0.840, override_rate=0.415, intervention=0.468, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=51
+Episode 80: baseline=71, ai=97, comparison=AI_WIN, trust=0.500, confidence=0.760, override_rate=0.410, intervention=0.426, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=97
+Episode 81: baseline=65, ai=65, comparison=TIE, trust=0.500, confidence=0.826, override_rate=0.405, intervention=0.456, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=65
+Episode 82: baseline=61, ai=81, comparison=AI_WIN, trust=0.506, confidence=0.836, override_rate=0.400, intervention=0.459, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=81
+Episode 83: baseline=51, ai=81, comparison=AI_WIN, trust=0.512, confidence=0.686, override_rate=0.395, intervention=0.383, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=81
+Episode 84: baseline=41, ai=54, comparison=AI_WIN, trust=0.519, confidence=0.784, override_rate=0.391, intervention=0.430, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=54
+Episode 85: baseline=67, ai=50, comparison=BASELINE_WIN, trust=0.512, confidence=0.763, override_rate=0.386, intervention=0.416, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=50
+Episode 86: baseline=81, ai=91, comparison=AI_WIN, trust=0.518, confidence=0.791, override_rate=0.382, intervention=0.428, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=91
+Episode 87: baseline=99, ai=87, comparison=BASELINE_WIN, trust=0.512, confidence=0.714, override_rate=0.378, intervention=0.386, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=87
+Episode 88: baseline=86, ai=57, comparison=BASELINE_WIN, trust=0.506, confidence=0.732, override_rate=0.374, intervention=0.391, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=57
+Episode 89: baseline=112, ai=88, comparison=BASELINE_WIN, trust=0.500, confidence=0.782, override_rate=0.370, intervention=0.413, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=112
+Episode 90: baseline=95, ai=57, comparison=BASELINE_WIN, trust=0.494, confidence=0.790, override_rate=0.376, intervention=0.420, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=95
+Episode 91: baseline=54, ai=48, comparison=BASELINE_WIN, trust=0.489, confidence=0.710, override_rate=0.383, intervention=0.382, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=54
+Episode 92: baseline=83, ai=97, comparison=AI_WIN, trust=0.494, confidence=0.850, override_rate=0.389, intervention=0.457, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=97
+Episode 93: baseline=95, ai=84, comparison=BASELINE_WIN, trust=0.489, confidence=0.798, override_rate=0.385, intervention=0.428, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=84
+Episode 94: baseline=83, ai=95, comparison=AI_WIN, trust=0.495, confidence=0.817, override_rate=0.381, intervention=0.436, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=83
+Episode 95: baseline=43, ai=50, comparison=AI_WIN, trust=0.500, confidence=0.784, override_rate=0.388, intervention=0.425, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=baseline, executed_utility=43
+Episode 96: baseline=87, ai=94, comparison=AI_WIN, trust=0.505, confidence=0.830, override_rate=0.394, intervention=0.453, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=94
+Episode 97: baseline=67, ai=50, comparison=BASELINE_WIN, trust=0.500, confidence=0.752, override_rate=0.390, intervention=0.410, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=50
+Episode 98: baseline=68, ai=44, comparison=BASELINE_WIN, trust=0.495, confidence=0.722, override_rate=0.386, intervention=0.392, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=44
+Episode 99: baseline=89, ai=96, comparison=AI_WIN, trust=0.500, confidence=0.845, override_rate=0.382, intervention=0.452, strength=normal, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=96
+Episode 100: baseline=29, ai=62, comparison=AI_WIN, trust=0.505, confidence=0.714, override_rate=0.379, intervention=0.385, strength=weak, supervisor=overtrust, autonomy=adaptive, executed=ai, executed_utility=62
+
+=== SUMMARY ===
+Supervisor mode: overtrust
+Autonomy mode: adaptive
+AI wins: 47
+Baseline wins: 46
+Ties: 7
+AI accepted: 63
+AI overridden: 37
+Weak recommendations: 61
+Normal recommendations: 39
+Strong recommendations: 0
+Mean executed utility: 72.740
+Mean AI confidence: 0.779
+Mean override rate: 0.403
+Mean intervention score: 0.439
+Final trust: 0.505
+Trust variance: 0.00255
+Trust history: [0.6, 0.667, 0.714, 0.625, 0.556, 0.5, 0.545, 0.583, 0.538, 0.5, 0.533, 0.562, 0.529, 0.556, 0.526, 0.55, 0.524, 0.5, 0.522, 0.542, 0.56, 0.577, 0.556, 0.556, 0.536, 0.552, 0.533, 0.516, 0.531, 0.515, 0.529, 0.543, 0.556, 0.568, 0.579, 0.59, 0.59, 0.575, 0.585, 0.595, 0.605, 0.591, 0.578, 0.587, 0.574, 0.562, 0.571, 0.56, 0.549, 0.558, 0.558, 0.558, 0.558, 0.566, 0.556, 0.545, 0.536, 0.526, 0.534, 0.525, 0.517, 0.525, 0.532, 0.524, 0.531, 0.523, 0.515, 0.507, 0.5, 0.507, 0.5, 0.493, 0.5, 0.493, 0.5, 0.493, 0.5, 0.5, 0.494, 0.5, 0.5, 0.506, 0.512, 0.519, 0.512, 0.518, 0.512, 0.506, 0.5, 0.494, 0.489, 0.494, 0.489, 0.495, 0.5, 0.505, 0.5, 0.495, 0.5, 0.505]

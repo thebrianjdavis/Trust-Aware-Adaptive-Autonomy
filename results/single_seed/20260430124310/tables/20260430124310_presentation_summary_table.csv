@@ -1,0 +1,4 @@
+supervisor_mode,adaptive_utility,fixed_utility,delta_utility,adaptive_accept_rate,fixed_accept_rate,delta_accept_pp,fixed_accept_rate_pct,adaptive_accept_rate_pct
+undertrust,162.09,162.09,0.0,0.27,0.27,0.0,27.0,27.0
+calibrated,161.47,161.94,-0.46999999999999886,0.43,0.44,-1.0000000000000009,44.0,43.0
+overtrust,160.7,160.98,-0.28000000000000114,0.6,0.83,-23.0,83.0,60.0
