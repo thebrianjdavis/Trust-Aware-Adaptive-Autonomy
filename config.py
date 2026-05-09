@@ -1,10 +1,14 @@
 ## @file config.py
-## @brief Configuration values for the HMT resource allocation MVP.
+## @brief Default simulation configuration schema for HMT experiments.
 
 from dataclasses import dataclass
 
 
 ## @brief Container for simulation configuration values.
+## @details
+## This dataclass provides default parameters for the simulator and defines the
+## valid fields that may be overridden by JSON configuration files passed through
+## the command-line interface.
 @dataclass(frozen=True)
 class SimulationConfig:
     ## @brief Number of assets available in each episode.

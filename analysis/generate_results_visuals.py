@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List
 
+import argparse
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -650,11 +651,38 @@ def ensure_output_directories(figures_dir: Path, tables_dir: Path) -> None:
     tables_dir.mkdir(parents=True, exist_ok=True)
 
 
+## @brief Parse command-line arguments.
+## @return Parsed argument namespace.
+def parse_arguments() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Generate single-seed result figures.",
+    )
+    parser.add_argument(
+        "--batch-dir",
+        type=str,
+        default="",
+        help="Specific single-seed batch directory to visualize. If omitted, latest batch is used.",
+    )
+
+    arguments = parser.parse_args()
+    return arguments
+
+
 ## @brief Program entry point.
 def main() -> None:
+    arguments = parse_arguments()
     results_dir = Path("results/single_seed")
 
-    latest_batch_dir, latest_batch_files = find_latest_complete_batch(results_dir)
+    if arguments.batch_dir:
+        latest_batch_dir = Path(arguments.batch_dir)
+        latest_batch_files = sorted(latest_batch_dir.glob("*.txt"))
+
+        if len(latest_batch_files) != 6:
+            raise ValueError(
+                f"Expected 6 result files in {latest_batch_dir}, found {len(latest_batch_files)}."
+            )
+    else:
+        latest_batch_dir, latest_batch_files = find_latest_complete_batch(results_dir)
 
     figures_dir = latest_batch_dir / "figures"
     tables_dir = latest_batch_dir / "tables"

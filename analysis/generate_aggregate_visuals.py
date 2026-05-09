@@ -7,6 +7,7 @@ from math import sqrt
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+import argparse
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -407,10 +408,159 @@ def plot_aggregate_acceptance_utility_trajectory(
     plt.close()
 
 
+## @brief Build an aggregate summary table for ablation deltas.
+## @param ablation_delta_dataframe Ablation delta dataframe.
+## @return Summary dataframe grouped by supervisor and comparison mode.
+def build_ablation_delta_summary_table(
+    ablation_delta_dataframe: pd.DataFrame,
+) -> pd.DataFrame:
+    metric_columns = [
+        "mean_executed_utility_delta",
+        "accept_rate_delta",
+        "override_rate_delta",
+        "weak_rate_delta",
+        "normal_rate_delta",
+        "strong_rate_delta",
+        "mean_intervention_score_delta",
+    ]
+
+    comparison_mode_order = [
+        "confidence_trust",
+        "behavior_only",
+        "adaptive",
+    ]
+
+    rows: List[Dict[str, float | str]] = []
+
+    for supervisor_mode in SUPERVISOR_ORDER:
+        for comparison_mode in comparison_mode_order:
+            group_df = ablation_delta_dataframe[
+                (ablation_delta_dataframe["supervisor_mode"] == supervisor_mode)
+                & (ablation_delta_dataframe["comparison_mode"] == comparison_mode)
+            ]
+
+            if group_df.empty:
+                continue
+
+            row: Dict[str, float | str] = {
+                "supervisor_mode": supervisor_mode,
+                "comparison_mode": comparison_mode,
+            }
+
+            for metric_column in metric_columns:
+                mean_value, std_value, ci95_value = compute_mean_std_ci(
+                    group_df[metric_column]
+                )
+                row[f"{metric_column}_mean"] = mean_value
+                row[f"{metric_column}_std"] = std_value
+                row[f"{metric_column}_ci95"] = ci95_value
+
+            rows.append(row)
+
+    summary_dataframe = pd.DataFrame(rows)
+    return summary_dataframe
+
+
+## @brief Plot ablation delta metric grouped by supervisor and comparison mode.
+## @param summary_dataframe Ablation summary dataframe.
+## @param metric_mean_column Mean metric column name.
+## @param metric_ci_column CI metric column name.
+## @param title Plot title.
+## @param y_label Y-axis label.
+## @param output_path Output figure path.
+def plot_ablation_delta_grouped_bars(
+    summary_dataframe: pd.DataFrame,
+    metric_mean_column: str,
+    metric_ci_column: str,
+    title: str,
+    y_label: str,
+    output_path: Path,
+) -> None:
+    comparison_modes = [
+        "confidence_trust",
+        "behavior_only",
+        "adaptive",
+    ]
+
+    comparison_labels = {
+        "confidence_trust": "Confidence + Trust",
+        "behavior_only": "Behavior Only",
+        "adaptive": "Full Adaptive",
+    }
+
+    x_positions = list(range(len(SUPERVISOR_ORDER)))
+    bar_width = 0.22
+
+    plt.figure(figsize=(11, 6))
+
+    for mode_index, comparison_mode in enumerate(comparison_modes):
+        mode_df = summary_dataframe[
+            summary_dataframe["comparison_mode"] == comparison_mode
+        ]
+
+        mean_values: List[float] = []
+        ci_values: List[float] = []
+
+        for supervisor_mode in SUPERVISOR_ORDER:
+            row = mode_df[mode_df["supervisor_mode"] == supervisor_mode].iloc[0]
+            mean_values.append(float(row[metric_mean_column]))
+            ci_values.append(float(row[metric_ci_column]))
+
+        offset = (mode_index - 1) * bar_width
+        shifted_positions = [
+            position + offset for position in x_positions
+        ]
+
+        plt.bar(
+            shifted_positions,
+            mean_values,
+            width=bar_width,
+            yerr=ci_values,
+            capsize=5,
+            label=comparison_labels[comparison_mode],
+        )
+
+    plt.axhline(0.0, color="black", linewidth=1.0)
+    plt.xticks(
+        x_positions,
+        [SUPERVISOR_DISPLAY_LABELS[mode] for mode in SUPERVISOR_ORDER],
+    )
+    plt.title(title)
+    plt.xlabel("Supervisor Mode")
+    plt.ylabel(y_label)
+    plt.legend(title="Mode vs Fixed")
+    plt.grid(axis="y", linestyle="--", alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=300, bbox_inches="tight")
+    plt.close()
+
+
+## @brief Parse command-line arguments.
+## @return Parsed argument namespace.
+def parse_arguments() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Generate aggregate Monte Carlo figures.",
+    )
+    parser.add_argument(
+        "--batch-dir",
+        type=str,
+        default="",
+        help="Specific multi-seed batch directory to visualize. If omitted, latest batch is used.",
+    )
+
+    arguments = parser.parse_args()
+    return arguments
+
+
 ## @brief Program entry point.
 def main() -> None:
+    arguments = parse_arguments()
     results_dir = Path("results")
-    batch_dir = find_latest_multi_seed_batch(results_dir)
+
+    if arguments.batch_dir:
+        batch_dir = Path(arguments.batch_dir)
+    else:
+        batch_dir = find_latest_multi_seed_batch(results_dir)
 
     raw_csv_path = batch_dir / "seed_level_results.csv"
     paired_delta_csv_path = batch_dir / "paired_deltas.csv"
@@ -452,6 +602,55 @@ def main() -> None:
         raw_dataframe=raw_dataframe,
         output_path=figures_dir / "aggregate_acceptance_utility_trajectory.png",
     )
+
+    ablation_delta_csv_path = batch_dir / "ablation_deltas.csv"
+
+    if ablation_delta_csv_path.exists():
+        ablation_delta_dataframe = pd.read_csv(ablation_delta_csv_path)
+        ablation_summary_df = build_ablation_delta_summary_table(
+            ablation_delta_dataframe
+        )
+
+        ablation_summary_df.to_csv(
+            tables_dir / "aggregate_ablation_delta_summary.csv",
+            index=False,
+        )
+
+        plot_ablation_delta_grouped_bars(
+            summary_dataframe=ablation_summary_df,
+            metric_mean_column="mean_executed_utility_delta_mean",
+            metric_ci_column="mean_executed_utility_delta_ci95",
+            title="Ablation Utility Difference vs Fixed",
+            y_label="Utility Difference",
+            output_path=figures_dir / "ablation_utility_delta_grouped.png",
+        )
+
+        plot_ablation_delta_grouped_bars(
+            summary_dataframe=ablation_summary_df,
+            metric_mean_column="accept_rate_delta_mean",
+            metric_ci_column="accept_rate_delta_ci95",
+            title="Ablation Acceptance Difference vs Fixed",
+            y_label="Acceptance Difference",
+            output_path=figures_dir / "ablation_acceptance_delta_grouped.png",
+        )
+
+        plot_ablation_delta_grouped_bars(
+            summary_dataframe=ablation_summary_df,
+            metric_mean_column="weak_rate_delta_mean",
+            metric_ci_column="weak_rate_delta_ci95",
+            title="Ablation Weak Recommendation Difference vs Fixed",
+            y_label="Weak Recommendation Difference",
+            output_path=figures_dir / "ablation_weak_recommendation_delta_grouped.png",
+        )
+
+        plot_ablation_delta_grouped_bars(
+            summary_dataframe=ablation_summary_df,
+            metric_mean_column="strong_rate_delta_mean",
+            metric_ci_column="strong_rate_delta_ci95",
+            title="Ablation Strong Recommendation Difference vs Fixed",
+            y_label="Strong Recommendation Difference",
+            output_path=figures_dir / "ablation_strong_recommendation_delta_grouped.png",
+        )
 
     print(f"Processed multi-seed batch: {batch_dir.name}")
     print(f"Saved aggregate tables to: {tables_dir}")

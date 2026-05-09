@@ -1,0 +1,12 @@
+{
+  "num_assets": 3,
+  "num_incidents": 8,
+  "num_time_slots": 10,
+  "min_priority": 5,
+  "max_priority": 20,
+  "min_duration": 1,
+  "max_duration": 3,
+  "beta_alpha": 5.0,
+  "beta_beta": 2.0,
+  "seed": 42
+}

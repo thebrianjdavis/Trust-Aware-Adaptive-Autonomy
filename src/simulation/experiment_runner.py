@@ -13,7 +13,7 @@ from data.calibration.fema_distribution import (
 
 from src.autonomy.adaptive_autonomy import (
     AdaptiveAutonomyConfig,
-    compute_intervention_score,
+    compute_intervention_score_for_mode,
     compute_override_rate,
     get_fixed_recommendation_strength,
     get_recommendation_strength,
@@ -182,20 +182,27 @@ def run_trust_experiment(
         )
         override_rate_history.append(current_override_rate)
 
-        if autonomy_mode == "adaptive":
-            intervention_score = compute_intervention_score(
+        if autonomy_mode == "fixed":
+            intervention_score = compute_intervention_score_for_mode(
                 ai_confidence=ai_confidence,
                 trust_score=trust_score,
                 override_rate=current_override_rate,
+                autonomy_mode=autonomy_mode,
+                config=autonomy_config,
+            )
+            recommendation_strength = get_fixed_recommendation_strength()
+        else:
+            intervention_score = compute_intervention_score_for_mode(
+                ai_confidence=ai_confidence,
+                trust_score=trust_score,
+                override_rate=current_override_rate,
+                autonomy_mode=autonomy_mode,
                 config=autonomy_config,
             )
             recommendation_strength = get_recommendation_strength(
                 intervention_score=intervention_score,
                 config=autonomy_config,
             )
-        else:
-            intervention_score = ai_confidence
-            recommendation_strength = get_fixed_recommendation_strength()
 
         intervention_score_history.append(intervention_score)
 

@@ -1,5 +1,5 @@
 ## @file adaptive_autonomy.py
-## @brief Adaptive autonomy logic for recommendation strength selection.
+## @brief Adaptive autonomy and ablation-mode intervention scoring logic.
 
 from dataclasses import dataclass
 
@@ -128,6 +128,75 @@ def compute_intervention_score(
         + config.trust_weight * trust_score
         + config.override_weight * behavior_signal
     )
+
+    intervention_score = clamp_score(intervention_score)
+    return intervention_score
+
+
+## @brief Normalize autonomy mode aliases.
+## @param autonomy_mode Requested autonomy mode.
+## @return Canonical autonomy mode string.
+def normalize_autonomy_mode(autonomy_mode: str) -> str:
+    normalized_mode = autonomy_mode
+
+    if autonomy_mode == "adaptive_full":
+        normalized_mode = "adaptive"
+
+    return normalized_mode
+
+
+## @brief Compute an intervention score for a specific autonomy ablation mode.
+## @details
+## Supported modes:
+## - fixed: fixed normal recommendations; score returned for logging only.
+## - confidence_trust: confidence + trust, no behavior signal.
+## - behavior_only: centered override behavior signal only.
+## - adaptive: confidence + trust + centered override behavior signal.
+## @param ai_confidence Confidence score for the AI plan.
+## @param trust_score Current trust score.
+## @param override_rate Smoothed supervisor override rate.
+## @param autonomy_mode Autonomy mode or ablation mode.
+## @param config Adaptive autonomy configuration.
+## @return Intervention score in [0, 1].
+def compute_intervention_score_for_mode(
+    ai_confidence: float,
+    trust_score: float,
+    override_rate: float,
+    autonomy_mode: str,
+    config: AdaptiveAutonomyConfig,
+) -> float:
+    normalized_mode = normalize_autonomy_mode(autonomy_mode)
+
+    if normalized_mode == "fixed":
+        intervention_score = ai_confidence
+
+    elif normalized_mode == "confidence_trust":
+        intervention_score = (
+            config.confidence_weight * ai_confidence
+            + config.trust_weight * trust_score
+        )
+
+    elif normalized_mode == "behavior_only":
+        behavior_signal = compute_override_behavior_signal(
+            override_rate=override_rate,
+            config=config,
+        )
+
+        intervention_score = (
+            config.target_override_rate
+            + config.override_weight * behavior_signal
+        )
+
+    elif normalized_mode == "adaptive":
+        intervention_score = compute_intervention_score(
+            ai_confidence=ai_confidence,
+            trust_score=trust_score,
+            override_rate=override_rate,
+            config=config,
+        )
+
+    else:
+        raise ValueError(f"Unsupported autonomy mode: {autonomy_mode}")
 
     intervention_score = clamp_score(intervention_score)
     return intervention_score

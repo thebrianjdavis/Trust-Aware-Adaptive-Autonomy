@@ -1,0 +1,36 @@
+{
+    "run_timestamp": "20260509115137",
+    "generated_at": "2026-05-09T11:52:26.314728",
+    "mode": "multi-seed",
+    "study": "standard",
+    "num_episodes": 250,
+    "num_seeds": 250,
+    "seed_start": 8675309,
+    "batch_name": "20260509115137_standard_baseline",
+    "batch_directory": "results/multi_seed/20260509115137_standard_baseline",
+    "config_file": "configs/baseline.json",
+    "supervisor_modes": [
+        "undertrust",
+        "calibrated",
+        "overtrust"
+    ],
+    "autonomy_modes": [
+        "fixed",
+        "adaptive"
+    ],
+    "simulation_config": {
+        "num_assets": 3,
+        "num_incidents": 8,
+        "num_time_slots": 10,
+        "min_priority": 5,
+        "max_priority": 20,
+        "min_duration": 1,
+        "max_duration": 3,
+        "beta_alpha": 5.0,
+        "beta_beta": 2.0,
+        "seed": 42
+    },
+    "command": "main.py --mode multi-seed --study standard --episodes 250 --num-seeds 250 --seed-start 8675309 --config-file configs/baseline.json --visualize",
+    "python_version": "3.12.0 | packaged by conda-forge | (main, Oct  3 2023, 08:36:57) [Clang 15.0.7 ]",
+    "platform": "macOS-26.3.1-arm64-arm-64bit"
+}
