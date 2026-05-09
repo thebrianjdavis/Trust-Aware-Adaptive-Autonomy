@@ -89,7 +89,7 @@ TIMESTAMP              = NO
 #---------------------------------------------------------------------------
 # Build related configuration options
 #---------------------------------------------------------------------------
-EXTRACT_ALL            = NO
+EXTRACT_ALL            = YES
 EXTRACT_PRIVATE        = NO
 EXTRACT_PRIV_VIRTUAL   = NO
 EXTRACT_PACKAGE        = NO
@@ -161,10 +161,8 @@ INPUT                  = README.md \
 INPUT_ENCODING         = UTF-8
 INPUT_FILE_ENCODING    =
 FILE_PATTERNS          = *.py \
-                         *.pyw \
                          *.md \
-                         *.markdown \
-                         *.dox
+                         *.markdown
 RECURSIVE              = YES
 EXCLUDE                =
 EXCLUDE_SYMLINKS       = NO
@@ -197,8 +195,8 @@ EXAMPLE_RECURSIVE      = NO
 IMAGE_PATH             = docs/img
 INPUT_FILTER           =
 # -a: include __init__ docstrings; -c: convert to Doxygen style
-FILTER_PATTERNS        = *.py="doxypypy -a -c"
-FILTER_SOURCE_FILES    = YES
+FILTER_PATTERNS        = 
+FILTER_SOURCE_FILES    = NO
 FILTER_SOURCE_PATTERNS =
 USE_MDFILE_AS_MAINPAGE = README.md
 IMPLICIT_DIR_DOCS      = YES
@@ -207,7 +205,7 @@ FORTRAN_COMMENT_AFTER  = 72
 #---------------------------------------------------------------------------
 # Configuration options related to source browsing
 #---------------------------------------------------------------------------
-SOURCE_BROWSER         = NO
+SOURCE_BROWSER         = YES
 INLINE_SOURCES         = NO
 STRIP_CODE_COMMENTS    = NO
 REFERENCED_BY_RELATION = YES
