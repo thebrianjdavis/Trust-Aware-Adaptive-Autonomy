@@ -6,6 +6,11 @@ The project is designed as a research prototype for exploring how adaptive auton
 
 ---
 
+## Documentation Page
+[Documentation for Trust-Aware Adaptive Autonomy](https://thebrianjdavis.github.io/Trust-Aware-Adaptive-Autonomy/index.html)
+
+---
+
 ## Research Motivation
 
 Human-machine teams can fail when trust is miscalibrated. If a human supervisor undertrusts an AI system, useful recommendations may be ignored. If the supervisor overtrusts the AI, poor recommendations may be accepted too readily. In both cases, the problem is not simply whether the AI can produce a plan, but whether the human-machine team relies on that plan appropriately.

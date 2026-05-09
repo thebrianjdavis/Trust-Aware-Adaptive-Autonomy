@@ -217,7 +217,7 @@ INPUT_FILTER           =
 FILTER_PATTERNS        = *.py="doxypypy -a -c"
 FILTER_SOURCE_FILES    = YES
 FILTER_SOURCE_PATTERNS =
-USE_MDFILE_AS_MAINPAGE = README.md
+USE_MDFILE_AS_MAINPAGE = docs/README.md
 IMPLICIT_DIR_DOCS      = YES
 FORTRAN_COMMENT_AFTER  = 72
 #---------------------------------------------------------------------------
