@@ -1,0 +1,122 @@
+site_name: Trust-Aware Adaptive Autonomy
+site_description: Research and developer documentation for trust-aware adaptive autonomy in human-machine teaming
+site_url: https://thebrianjdavis.github.io/Trust-Aware-Adaptive-Autonomy/
+repo_url: https://github.com/thebrianjdavis/Trust-Aware-Adaptive-Autonomy
+repo_name: thebrianjdavis/Trust-Aware-Adaptive-Autonomy
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  language: en
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - content.code.annotate
+    - content.code.copy
+    - content.tabs.link
+    - navigation.footer
+    - navigation.indexes
+    - navigation.sections
+    - navigation.tabs
+    - navigation.top
+    - search.highlight
+    - search.suggest
+    - toc.follow
+
+nav:
+  - Home: index.md
+  - Overview:
+      - Project Overview: overview/index.md
+      - Research Questions: overview/research-questions.md
+  - Concepts:
+      - Trust and Reliance: concepts/trust-and-reliance.md
+      - Adaptive Autonomy: concepts/adaptive-autonomy.md
+      - Data Grounding: concepts/data-grounding.md
+  - Architecture:
+      - System Architecture: architecture/index.md
+      - Components: architecture/components.md
+  - Experiments:
+      - Study Design: experiments/index.md
+      - Scenario Configurations: experiments/configurations.md
+  - User Guide:
+      - Getting Started: user-guide/getting-started.md
+      - Running Experiments: user-guide/running-experiments.md
+      - Outputs and Visualizations: user-guide/outputs.md
+  - Results:
+      - Findings and Interpretation: results/index.md
+  - API Reference:
+      - API Overview: api-reference/index.md
+      - Configuration: api-reference/configuration.md
+      - Environment: api-reference/environment.md
+      - Planning: api-reference/planning.md
+      - Autonomy and Trust: api-reference/autonomy-and-trust.md
+      - Supervision: api-reference/supervision.md
+      - Simulation: api-reference/simulation.md
+      - Data Calibration: api-reference/data-calibration.md
+  - Development:
+      - Development Guide: development/index.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths:
+            - .
+          options:
+            docstring_style: google
+            heading_level: 2
+            members_order: source
+            merge_init_into_class: true
+            separate_signature: true
+            show_category_heading: true
+            show_if_no_docstring: true
+            show_root_full_path: false
+            show_root_heading: true
+            show_signature_annotations: true
+            signature_crossrefs: true
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+copyright: Copyright &copy; Trust-Aware Adaptive Autonomy contributors

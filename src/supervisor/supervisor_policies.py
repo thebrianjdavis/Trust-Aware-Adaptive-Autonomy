@@ -1,22 +1,31 @@
-## @file supervisor_policies.py
-## @brief Simulated supervisor policies for HMT experiments.
+"""Simulated supervisor policies for HMT experiments."""
 
 import random
 from dataclasses import dataclass
 
 
-## @brief Clamp a probability to the valid interval [0, 1].
-## @param probability_value Probability value to clamp.
-## @return Clamped probability value.
 def clamp_probability(probability_value: float) -> float:
+    """Clamp a probability to the valid interval [0, 1].
+
+    Args:
+        probability_value: Probability value to clamp.
+
+    Returns:
+        Clamped probability value.
+    """
     clamped_probability = max(0.0, min(1.0, probability_value))
     return clamped_probability
 
 
-## @brief Convert recommendation strength to an additive acceptance modifier.
-## @param recommendation_strength Recommendation strength label.
-## @return Acceptance probability modifier.
 def get_strength_modifier(recommendation_strength: str) -> float:
+    """Convert recommendation strength to an additive acceptance modifier.
+
+    Args:
+        recommendation_strength: Recommendation strength label.
+
+    Returns:
+        Acceptance probability modifier.
+    """
     strength_modifier = 0.0
 
     if recommendation_strength == "weak":
@@ -27,18 +36,12 @@ def get_strength_modifier(recommendation_strength: str) -> float:
     return strength_modifier
 
 
-## @brief Base class for supervisor policies.
 @dataclass(frozen=True)
 class SupervisorPolicy:
-    ## @brief Human-readable policy name.
+    #: Human-readable policy name.
+    """Base class for supervisor policies."""
     policy_name: str
 
-    ## @brief Decide whether to accept the AI recommendation.
-    ## @param ai_confidence Confidence score for the AI plan.
-    ## @param trust_score Current machine trust estimate.
-    ## @param recommendation_strength Recommendation strength label.
-    ## @param rng Random number generator.
-    ## @return True if AI plan is accepted, otherwise False.
     def accept_ai_plan(
         self,
         ai_confidence: float,
@@ -46,22 +49,27 @@ class SupervisorPolicy:
         recommendation_strength: str,
         rng: random.Random,
     ) -> bool:
+        """Decide whether to accept the AI recommendation.
+
+        Args:
+            ai_confidence: Confidence score for the AI plan.
+            trust_score: Current machine trust estimate.
+            recommendation_strength: Recommendation strength label.
+            rng: Random number generator.
+
+        Returns:
+            True if AI plan is accepted, otherwise False.
+        """
         raise NotImplementedError("Subclasses must implement accept_ai_plan().")
 
 
-## @brief Supervisor policy representing undertrust behavior.
 @dataclass(frozen=True)
 class UndertrustSupervisorPolicy(SupervisorPolicy):
-    ## @brief Initialize the undertrust policy name.
+    """Supervisor policy representing undertrust behavior."""
     def __init__(self) -> None:
+        """Initialize the undertrust policy name."""
         object.__setattr__(self, "policy_name", "undertrust")
 
-    ## @brief Decide whether to accept the AI recommendation.
-    ## @param ai_confidence Confidence score for the AI plan.
-    ## @param trust_score Current machine trust estimate.
-    ## @param recommendation_strength Recommendation strength label.
-    ## @param rng Random number generator.
-    ## @return True if AI plan is accepted, otherwise False.
     def accept_ai_plan(
         self,
         ai_confidence: float,
@@ -69,6 +77,17 @@ class UndertrustSupervisorPolicy(SupervisorPolicy):
         recommendation_strength: str,
         rng: random.Random,
     ) -> bool:
+        """Decide whether to accept the AI recommendation.
+
+        Args:
+            ai_confidence: Confidence score for the AI plan.
+            trust_score: Current machine trust estimate.
+            recommendation_strength: Recommendation strength label.
+            rng: Random number generator.
+
+        Returns:
+            True if AI plan is accepted, otherwise False.
+        """
         if ai_confidence < 0.75:
             accept_probability = 0.05 + 0.10 * trust_score
         elif ai_confidence < 0.85:
@@ -81,19 +100,13 @@ class UndertrustSupervisorPolicy(SupervisorPolicy):
         return rng.random() < accept_probability
 
 
-## @brief Supervisor policy representing calibrated behavior.
 @dataclass(frozen=True)
 class CalibratedSupervisorPolicy(SupervisorPolicy):
-    ## @brief Initialize the calibrated policy name.
+    """Supervisor policy representing calibrated behavior."""
     def __init__(self) -> None:
+        """Initialize the calibrated policy name."""
         object.__setattr__(self, "policy_name", "calibrated")
 
-    ## @brief Decide whether to accept the AI recommendation.
-    ## @param ai_confidence Confidence score for the AI plan.
-    ## @param trust_score Current machine trust estimate.
-    ## @param recommendation_strength Recommendation strength label.
-    ## @param rng Random number generator.
-    ## @return True if AI plan is accepted, otherwise False.
     def accept_ai_plan(
         self,
         ai_confidence: float,
@@ -101,6 +114,17 @@ class CalibratedSupervisorPolicy(SupervisorPolicy):
         recommendation_strength: str,
         rng: random.Random,
     ) -> bool:
+        """Decide whether to accept the AI recommendation.
+
+        Args:
+            ai_confidence: Confidence score for the AI plan.
+            trust_score: Current machine trust estimate.
+            recommendation_strength: Recommendation strength label.
+            rng: Random number generator.
+
+        Returns:
+            True if AI plan is accepted, otherwise False.
+        """
         if ai_confidence < 0.70:
             accept_probability = 0.10 + 0.10 * trust_score
         elif ai_confidence < 0.80:
@@ -115,19 +139,13 @@ class CalibratedSupervisorPolicy(SupervisorPolicy):
         return rng.random() < accept_probability
 
 
-## @brief Supervisor policy representing overtrust behavior.
 @dataclass(frozen=True)
 class OvertrustSupervisorPolicy(SupervisorPolicy):
-    ## @brief Initialize the overtrust policy name.
+    """Supervisor policy representing overtrust behavior."""
     def __init__(self) -> None:
+        """Initialize the overtrust policy name."""
         object.__setattr__(self, "policy_name", "overtrust")
 
-    ## @brief Decide whether to accept the AI recommendation.
-    ## @param ai_confidence Confidence score for the AI plan.
-    ## @param trust_score Current machine trust estimate.
-    ## @param recommendation_strength Recommendation strength label.
-    ## @param rng Random number generator.
-    ## @return True if AI plan is accepted, otherwise False.
     def accept_ai_plan(
         self,
         ai_confidence: float,
@@ -135,6 +153,17 @@ class OvertrustSupervisorPolicy(SupervisorPolicy):
         recommendation_strength: str,
         rng: random.Random,
     ) -> bool:
+        """Decide whether to accept the AI recommendation.
+
+        Args:
+            ai_confidence: Confidence score for the AI plan.
+            trust_score: Current machine trust estimate.
+            recommendation_strength: Recommendation strength label.
+            rng: Random number generator.
+
+        Returns:
+            True if AI plan is accepted, otherwise False.
+        """
         if ai_confidence < 0.70:
             accept_probability = 0.65 + 0.10 * trust_score
         elif ai_confidence < 0.85:
