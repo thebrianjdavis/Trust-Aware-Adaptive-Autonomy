@@ -58,12 +58,12 @@ them.
 
 ## Previous Research
 
-Brian’s master’s thesis, *Leveraging Counterfactuals for Enhanced Natural
-Language Inference: A Multitask Knowledge Distillation Approach*, investigated
-whether counterfactual examples could improve natural language inference
-through multitask knowledge distillation. That work explored counterfactual
-reasoning, model behavior, and methods for transferring knowledge into smaller
-language models.
+Brian’s master’s thesis,
+[*Leveraging Counterfactuals for Enhanced Natural Language Inference: A Multitask Knowledge Distillation Approach*](https://rave.ohiolink.edu/etdc/view?acc_num=wright1748367632205921),
+investigated whether counterfactual examples could improve natural language
+inference through multitask knowledge distillation. That work explored
+counterfactual reasoning, model behavior, and methods for transferring
+knowledge into smaller language models.
 
 His current research extends this broader interest in trustworthy and
 understandable artificial intelligence into human–AI teaming, where the central
