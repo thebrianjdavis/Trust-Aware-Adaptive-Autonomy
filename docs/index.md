@@ -121,5 +121,5 @@ depending on the selected run mode.
 
 <p class="project-attribution" markdown>
 Developed by [Brian J. Davis](about.md), Ph.D. Candidate in Computer Science and
-Engineering at Wright State University and Senior AI/ML Software Engineer.
+Engineering at Wright State University and AI/ML Software Engineer.
 </p>

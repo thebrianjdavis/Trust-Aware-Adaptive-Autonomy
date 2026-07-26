@@ -28,7 +28,7 @@ Wright State University’s College of Engineering and Computer Science. He
 earned both his Bachelor of Science and Master of Science degrees in Computer
 Science from Wright State University.
 
-Brian is also aan AI/ML Software Engineer. His work spans applied artificial
+Brian is also an AI/ML Software Engineer. His work spans applied artificial
 intelligence, scientific software, simulation systems, software architecture,
 and reproducible research infrastructure. His academic and professional work
 is unified by an interest in building intelligent systems that are both
