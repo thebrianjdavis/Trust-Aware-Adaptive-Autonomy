@@ -56,7 +56,7 @@ bound claims about real human-machine teams.
 - statistical testing and effect-size reporting;
 - cross-configuration sensitivity summaries.
 
-## Reporting guidance
+## Reporting and Citation Guidance
 
 Publications should include the study mode, scenario, resolved configuration,
 number of episodes and seeds, seed range, supervisor policies, autonomy modes,

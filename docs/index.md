@@ -113,7 +113,13 @@ depending on the selected run mode.
 
 -   **Interpret evidence**
 
+    [Research impact](research/impact.md) ·
     [Results](results/index.md) ·
     [Data grounding](concepts/data-grounding.md)
 
 </div>
+
+<p class="project-attribution" markdown>
+Developed by [Brian J. Davis](about.md), Ph.D. Candidate in Computer Science and
+Engineering at Wright State University and Senior AI/ML Software Engineer.
+</p>

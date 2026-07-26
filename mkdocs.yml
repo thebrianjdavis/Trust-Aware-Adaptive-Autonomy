@@ -43,6 +43,7 @@ nav:
   - Overview:
       - Project Overview: overview/index.md
       - Research Questions: overview/research-questions.md
+      - Research Impact: research/impact.md
   - Concepts:
       - Trust and Reliance: concepts/trust-and-reliance.md
       - Adaptive Autonomy: concepts/adaptive-autonomy.md
@@ -70,6 +71,7 @@ nav:
       - Data Calibration: api-reference/data-calibration.md
   - Development:
       - Development Guide: development/index.md
+  - About: about.md
 
 plugins:
   - search
@@ -118,5 +120,8 @@ markdown_extensions:
 extra_javascript:
   - javascripts/mathjax.js
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+extra_css:
+  - stylesheets/extra.css
 
 copyright: Copyright &copy; Trust-Aware Adaptive Autonomy contributors
