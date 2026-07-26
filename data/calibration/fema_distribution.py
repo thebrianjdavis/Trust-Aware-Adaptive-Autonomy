@@ -1,5 +1,4 @@
-## @file fema_distribution.py
-## @brief Build FEMA-derived empirical distributions for simulator calibration.
+"""Build FEMA-derived empirical distributions for simulator calibration."""
 
 from __future__ import annotations
 
@@ -11,7 +10,7 @@ from typing import Dict, List
 import pandas as pd
 
 
-## @brief Maps FEMA incident types to simulator capabilities.
+#: Maps FEMA incident types to simulator capabilities.
 FEMA_TYPE_TO_CAPABILITY: Dict[str, str] = {
     "Biological": "medical",
     "Chemical": "medical",
@@ -43,23 +42,28 @@ FEMA_TYPE_TO_CAPABILITY: Dict[str, str] = {
 }
 
 
-## @brief Stores FEMA-derived sampling distributions for the simulator.
 @dataclass(frozen=True)
 class FemaCalibrationData:
-    ## @brief FEMA incident types available for sampling.
+    #: FEMA incident types available for sampling.
+    """Stores FEMA-derived sampling distributions for the simulator."""
     incident_types: List[str]
 
-    ## @brief Sampling weights aligned with incident_types.
+    #: Sampling weights aligned with incident_types.
     incident_type_weights: List[float]
 
-    ## @brief FEMA-derived duration slot samples.
+    #: FEMA-derived duration slot samples.
     duration_slots: List[int]
 
 
-## @brief Convert a FEMA disaster duration in days into a simulator slot duration.
-## @param duration_days FEMA duration in days.
-## @return Simulator duration in slots.
 def map_duration_days_to_slots(duration_days: float) -> int:
+    """Convert a FEMA disaster duration in days into a simulator slot duration.
+
+    Args:
+        duration_days: FEMA duration in days.
+
+    Returns:
+        Simulator duration in slots.
+    """
     duration_slots = 1
 
     if duration_days <= 5:
@@ -72,10 +76,15 @@ def map_duration_days_to_slots(duration_days: float) -> int:
     return duration_slots
 
 
-## @brief Load and process FEMA data for simulator calibration.
-## @param csv_path Path to the FEMA-style disaster declarations CSV.
-## @return FEMA calibration data object.
 def load_fema_calibration_data(csv_path: str | Path) -> FemaCalibrationData:
+    """Load and process FEMA data for simulator calibration.
+
+    Args:
+        csv_path: Path to the FEMA-style disaster declarations CSV.
+
+    Returns:
+        FEMA calibration data object.
+    """
     df = pd.read_csv(csv_path)
 
     df["incident_begin_date"] = pd.to_datetime(
@@ -119,14 +128,19 @@ def load_fema_calibration_data(csv_path: str | Path) -> FemaCalibrationData:
     return calibration_data
 
 
-## @brief Sample a FEMA-derived incident type.
-## @param calibration_data FEMA calibration data.
-## @param rng Random number generator.
-## @return Sampled FEMA incident type.
 def sample_incident_type(
     calibration_data: FemaCalibrationData,
     rng: random.Random,
 ) -> str:
+    """Sample a FEMA-derived incident type.
+
+    Args:
+        calibration_data: FEMA calibration data.
+        rng: Random number generator.
+
+    Returns:
+        Sampled FEMA incident type.
+    """
     incident_type = rng.choices(
         population=calibration_data.incident_types,
         weights=calibration_data.incident_type_weights,
@@ -135,21 +149,31 @@ def sample_incident_type(
     return incident_type
 
 
-## @brief Convert a FEMA incident type into a simulator capability.
-## @param incident_type FEMA incident type.
-## @return Simulator capability label.
 def map_incident_type_to_capability(incident_type: str) -> str:
+    """Convert a FEMA incident type into a simulator capability.
+
+    Args:
+        incident_type: FEMA incident type.
+
+    Returns:
+        Simulator capability label.
+    """
     required_capability = FEMA_TYPE_TO_CAPABILITY[incident_type]
     return required_capability
 
 
-## @brief Sample a FEMA-derived simulator duration.
-## @param calibration_data FEMA calibration data.
-## @param rng Random number generator.
-## @return Sampled duration in simulator slots.
 def sample_duration_slots(
     calibration_data: FemaCalibrationData,
     rng: random.Random,
 ) -> int:
+    """Sample a FEMA-derived simulator duration.
+
+    Args:
+        calibration_data: FEMA calibration data.
+        rng: Random number generator.
+
+    Returns:
+        Sampled duration in simulator slots.
+    """
     duration_slots = rng.choice(calibration_data.duration_slots)
     return duration_slots

@@ -1,15 +1,19 @@
-## @file ai_planner.py
-## @brief AI planner for the HMT resource allocation MVP.
+"""AI planner for the HMT resource allocation MVP."""
 
 from typing import Dict, List, Set
 
 from src.environment.models import Asset, Episode, Incident, Plan, PlanAssignment
 
 
-## @brief Create an empty occupancy map for each asset.
-## @param assets Assets available in the episode.
-## @return Dictionary mapping asset identifiers to occupied time slots.
 def build_asset_occupancy_map(assets: List[Asset]) -> Dict[str, Set[int]]:
+    """Create an empty occupancy map for each asset.
+
+    Args:
+        assets: Assets available in the episode.
+
+    Returns:
+        Dictionary mapping asset identifiers to occupied time slots.
+    """
     occupancy_map: Dict[str, Set[int]] = {}
 
     for asset in assets:
@@ -18,10 +22,15 @@ def build_asset_occupancy_map(assets: List[Asset]) -> Dict[str, Set[int]]:
     return occupancy_map
 
 
-## @brief Return all feasible start times for an incident.
-## @param incident Incident to evaluate.
-## @return Candidate start times.
 def get_candidate_start_times(incident: Incident) -> List[int]:
+    """Return all feasible start times for an incident.
+
+    Args:
+        incident: Incident to evaluate.
+
+    Returns:
+        Candidate start times.
+    """
     candidate_start_times: List[int] = []
     latest_start = incident.latest_finish - incident.duration
 
@@ -31,18 +40,23 @@ def get_candidate_start_times(incident: Incident) -> List[int]:
     return candidate_start_times
 
 
-## @brief Check whether an incident can be assigned to an asset at a start time.
-## @param incident Incident to assign.
-## @param asset Candidate asset.
-## @param start_time Proposed start time.
-## @param occupancy_map Current asset occupancy map.
-## @return True if assignment is feasible, otherwise False.
 def is_assignment_feasible(
     incident: Incident,
     asset: Asset,
     start_time: int,
     occupancy_map: Dict[str, Set[int]],
 ) -> bool:
+    """Check whether an incident can be assigned to an asset at a start time.
+
+    Args:
+        incident: Incident to assign.
+        asset: Candidate asset.
+        start_time: Proposed start time.
+        occupancy_map: Current asset occupancy map.
+
+    Returns:
+        True if assignment is feasible, otherwise False.
+    """
     is_feasible = True
 
     if incident.required_capability not in asset.capabilities:
@@ -60,21 +74,31 @@ def is_assignment_feasible(
     return is_feasible
 
 
-## @brief Compute an incident score for the AI planner.
-## @details
-## The score favors high-priority, high-probability, shorter-duration incidents.
-## @param incident Incident to score.
-## @return Incident score.
 def compute_incident_score(incident: Incident) -> float:
+    """Compute an incident score for the AI planner.
+
+    The score favors high-priority, high-probability, shorter-duration incidents.
+
+    Args:
+        incident: Incident to score.
+
+    Returns:
+        Incident score.
+    """
     score = (incident.priority * incident.success_probability) / incident.duration
     return score
 
 
-## @brief Count how many assets can service the incident.
-## @param incident Incident to evaluate.
-## @param assets Available assets.
-## @return Number of compatible assets.
 def count_compatible_assets(incident: Incident, assets: List[Asset]) -> int:
+    """Count how many assets can service the incident.
+
+    Args:
+        incident: Incident to evaluate.
+        assets: Available assets.
+
+    Returns:
+        Number of compatible assets.
+    """
     compatible_asset_count = 0
 
     for asset in assets:
@@ -84,37 +108,47 @@ def count_compatible_assets(incident: Incident, assets: List[Asset]) -> int:
     return compatible_asset_count
 
 
-## @brief Compute a ranking tuple for a candidate asset assignment.
-## @details
-## Lower tuples are preferred. The planner prefers:
-## 1. Less flexible assets first, preserving flexible assets for later.
-## 2. Earlier start times.
-## 3. Lower current occupancy to spread load when possible.
-## @param asset Candidate asset.
-## @param start_time Proposed assignment start time.
-## @param occupancy_map Current asset occupancy map.
-## @return Ranking tuple for lexicographic comparison.
 def compute_assignment_rank(
     asset: Asset,
     start_time: int,
     occupancy_map: Dict[str, Set[int]],
 ) -> tuple[int, int, int]:
+    """Compute a ranking tuple for a candidate asset assignment.
+
+    Lower tuples are preferred. The planner prefers:
+    1. Less flexible assets first, preserving flexible assets for later.
+    2. Earlier start times.
+    3. Lower current occupancy to spread load when possible.
+
+    Args:
+        asset: Candidate asset.
+        start_time: Proposed assignment start time.
+        occupancy_map: Current asset occupancy map.
+
+    Returns:
+        Ranking tuple for lexicographic comparison.
+    """
     asset_flexibility = len(asset.capabilities)
     current_occupancy = len(occupancy_map[asset.asset_id])
     assignment_rank = (asset_flexibility, start_time, current_occupancy)
     return assignment_rank
 
 
-## @brief Find the best feasible asset/start-time pair for an incident.
-## @param incident Incident to assign.
-## @param assets Assets available in the episode.
-## @param occupancy_map Current asset occupancy map.
-## @return Best asset/start-time tuple if found, otherwise None.
 def find_best_feasible_assignment(
     incident: Incident,
     assets: List[Asset],
     occupancy_map: Dict[str, Set[int]],
 ) -> tuple[str, int] | None:
+    """Find the best feasible asset/start-time pair for an incident.
+
+    Args:
+        incident: Incident to assign.
+        assets: Assets available in the episode.
+        occupancy_map: Current asset occupancy map.
+
+    Returns:
+        Best asset/start-time tuple if found, otherwise None.
+    """
     best_asset_id: str | None = None
     best_start_time: int | None = None
     best_rank: tuple[int, int, int] | None = None
@@ -143,17 +177,21 @@ def find_best_feasible_assignment(
     return best_assignment
 
 
-## @brief Create an AI plan using an uncertainty-aware heuristic.
-## @details
-## The AI planner sorts incidents by:
-## 1. Higher expected utility density
-## 2. Fewer compatible assets first
-## 3. Earlier latest finish
-##
-## It then assigns incidents while preserving flexible assets when possible.
-## @param episode Episode containing incidents and assets.
-## @return Constructed AI plan.
 def create_ai_plan(episode: Episode) -> Plan:
+    """Create an AI plan using an uncertainty-aware heuristic.
+
+    The AI planner sorts incidents by:
+    1. Higher expected utility density
+    2. Fewer compatible assets first
+    3. Earlier latest finish
+    It then assigns incidents while preserving flexible assets when possible.
+
+    Args:
+        episode: Episode containing incidents and assets.
+
+    Returns:
+        Constructed AI plan.
+    """
     sorted_incidents = sorted(
         episode.incidents,
         key=lambda incident: (

@@ -1,5 +1,4 @@
-## @file generator.py
-## @brief Episode generation for the HMT resource allocation MVP.
+"""Episode generation for the HMT resource allocation MVP."""
 
 from __future__ import annotations
 
@@ -16,10 +15,15 @@ from data.calibration.fema_distribution import (
 from src.environment.models import Asset, Episode, Incident
 
 
-## @brief Generate a fixed set of assets for the MVP scenario.
-## @param config Simulation configuration values.
-## @return List of generated assets.
 def generate_assets(config: SimulationConfig) -> List[Asset]:
+    """Generate a fixed set of assets for the MVP scenario.
+
+    Args:
+        config: Simulation configuration values.
+
+    Returns:
+        List of generated assets.
+    """
     assets: List[Asset] = []
 
     predefined_assets = [
@@ -45,16 +49,21 @@ def generate_assets(config: SimulationConfig) -> List[Asset]:
     return assets
 
 
-## @brief Generate synthetic incidents for one episode using FEMA-derived sampling.
-## @param config Simulation configuration values.
-## @param rng Random number generator.
-## @param calibration_data FEMA-derived calibration data.
-## @return List of generated incidents.
 def generate_incidents(
     config: SimulationConfig,
     rng: random.Random,
     calibration_data: FemaCalibrationData,
 ) -> List[Incident]:
+    """Generate synthetic incidents for one episode using FEMA-derived sampling.
+
+    Args:
+        config: Simulation configuration values.
+        rng: Random number generator.
+        calibration_data: FEMA-derived calibration data.
+
+    Returns:
+        List of generated incidents.
+    """
     incidents: List[Incident] = []
 
     for incident_index in range(config.num_incidents):
@@ -84,16 +93,21 @@ def generate_incidents(
     return incidents
 
 
-## @brief Generate one full episode consisting of incidents and assets.
-## @param config Simulation configuration values.
-## @param calibration_data FEMA-derived calibration data.
-## @param rng Random number generator. If None, a reproducible RNG is created from config.seed.
-## @return Generated episode.
 def generate_episode(
     config: SimulationConfig,
     calibration_data: FemaCalibrationData,
     rng: random.Random | None = None,
 ) -> Episode:
+    """Generate one full episode consisting of incidents and assets.
+
+    Args:
+        config: Simulation configuration values.
+        calibration_data: FEMA-derived calibration data.
+        rng: Random number generator. If None, a reproducible RNG is created from config.seed.
+
+    Returns:
+        Generated episode.
+    """
     episode_rng = rng if rng is not None else random.Random(config.seed)
     assets = generate_assets(config)
     incidents = generate_incidents(config, episode_rng, calibration_data)

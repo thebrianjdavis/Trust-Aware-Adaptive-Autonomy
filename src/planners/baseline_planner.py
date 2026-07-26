@@ -1,15 +1,19 @@
-## @file baseline_planner.py
-## @brief Supervisor-only baseline heuristic planner.
+"""Supervisor-only baseline heuristic planner."""
 
 from typing import Dict, List, Set
 
 from src.environment.models import Asset, Episode, Incident, Plan, PlanAssignment
 
 
-## @brief Create an empty occupancy map for each asset.
-## @param assets Assets available in the episode.
-## @return Dictionary mapping asset identifiers to occupied time slots.
 def build_asset_occupancy_map(assets: List[Asset]) -> Dict[str, Set[int]]:
+    """Create an empty occupancy map for each asset.
+
+    Args:
+        assets: Assets available in the episode.
+
+    Returns:
+        Dictionary mapping asset identifiers to occupied time slots.
+    """
     occupancy_map: Dict[str, Set[int]] = {}
 
     for asset in assets:
@@ -18,10 +22,15 @@ def build_asset_occupancy_map(assets: List[Asset]) -> Dict[str, Set[int]]:
     return occupancy_map
 
 
-## @brief Return all feasible start times for an incident.
-## @param incident Incident to evaluate.
-## @return Candidate start times.
 def get_candidate_start_times(incident: Incident) -> List[int]:
+    """Return all feasible start times for an incident.
+
+    Args:
+        incident: Incident to evaluate.
+
+    Returns:
+        Candidate start times.
+    """
     candidate_start_times: List[int] = []
     latest_start = incident.latest_finish - incident.duration
 
@@ -31,18 +40,23 @@ def get_candidate_start_times(incident: Incident) -> List[int]:
     return candidate_start_times
 
 
-## @brief Check whether an incident can be assigned to an asset at a start time.
-## @param incident Incident to assign.
-## @param asset Candidate asset.
-## @param start_time Proposed start time.
-## @param occupancy_map Current asset occupancy map.
-## @return True if assignment is feasible, otherwise False.
 def is_assignment_feasible(
     incident: Incident,
     asset: Asset,
     start_time: int,
     occupancy_map: Dict[str, Set[int]],
 ) -> bool:
+    """Check whether an incident can be assigned to an asset at a start time.
+
+    Args:
+        incident: Incident to assign.
+        asset: Candidate asset.
+        start_time: Proposed start time.
+        occupancy_map: Current asset occupancy map.
+
+    Returns:
+        True if assignment is feasible, otherwise False.
+    """
     is_feasible = True
 
     if incident.required_capability not in asset.capabilities:
@@ -60,18 +74,23 @@ def is_assignment_feasible(
     return is_feasible
 
 
-## @brief Assign an incident using a first-fit heuristic if possible.
-## @param incident Incident to assign.
-## @param assets Assets available in the episode.
-## @param occupancy_map Current asset occupancy map.
-## @param plan Plan being constructed.
-## @return True if assignment was made, otherwise False.
 def assign_incident_if_possible(
     incident: Incident,
     assets: List[Asset],
     occupancy_map: Dict[str, Set[int]],
     plan: Plan,
 ) -> bool:
+    """Assign an incident using a first-fit heuristic if possible.
+
+    Args:
+        incident: Incident to assign.
+        assets: Assets available in the episode.
+        occupancy_map: Current asset occupancy map.
+        plan: Plan being constructed.
+
+    Returns:
+        True if assignment was made, otherwise False.
+    """
     assignment_made = False
 
     for asset in assets:
@@ -100,10 +119,15 @@ def assign_incident_if_possible(
     return assignment_made
 
 
-## @brief Create a supervisor-only baseline plan using a greedy heuristic.
-## @param episode Episode containing incidents and assets.
-## @return Constructed baseline plan.
 def create_baseline_plan(episode: Episode) -> Plan:
+    """Create a supervisor-only baseline plan using a greedy heuristic.
+
+    Args:
+        episode: Episode containing incidents and assets.
+
+    Returns:
+        Constructed baseline plan.
+    """
     sorted_incidents = sorted(
         episode.incidents,
         key=lambda incident: -incident.priority,

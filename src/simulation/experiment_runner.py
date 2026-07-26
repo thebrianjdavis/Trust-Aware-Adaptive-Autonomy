@@ -1,5 +1,4 @@
-## @file experiment_runner.py
-## @brief Run repeated simulation episodes and track trust over time.
+"""Run repeated simulation episodes and track trust over time."""
 
 import random
 from dataclasses import dataclass
@@ -32,72 +31,64 @@ from src.supervisor.supervisor_policies import (
 )
 
 
-## @brief Stores the summary output of one full experiment run.
 @dataclass(frozen=True)
 class ExperimentRunSummary:
-    ## @brief Supervisor policy mode.
+    #: Supervisor policy mode.
+    """Stores the summary output of one full experiment run."""
     supervisor_mode: str
 
-    ## @brief Autonomy mode.
+    #: Autonomy mode.
     autonomy_mode: str
 
-    ## @brief Number of episodes run.
+    #: Number of episodes run.
     num_episodes: int
 
-    ## @brief Number of AI wins.
+    #: Number of AI wins.
     ai_wins: int
 
-    ## @brief Number of baseline wins.
+    #: Number of baseline wins.
     baseline_wins: int
 
-    ## @brief Number of ties.
+    #: Number of ties.
     ties: int
 
-    ## @brief Number of times the AI plan was accepted.
+    #: Number of times the AI plan was accepted.
     ai_accepted: int
 
-    ## @brief Number of times the AI plan was overridden.
+    #: Number of times the AI plan was overridden.
     ai_overridden: int
 
-    ## @brief Number of weak recommendations.
+    #: Number of weak recommendations.
     weak_recommendations: int
 
-    ## @brief Number of normal recommendations.
+    #: Number of normal recommendations.
     normal_recommendations: int
 
-    ## @brief Number of strong recommendations.
+    #: Number of strong recommendations.
     strong_recommendations: int
 
-    ## @brief Mean executed utility.
+    #: Mean executed utility.
     mean_executed_utility: float
 
-    ## @brief Mean AI confidence.
+    #: Mean AI confidence.
     mean_ai_confidence: float
 
-    ## @brief Mean override rate.
+    #: Mean override rate.
     mean_override_rate: float
 
-    ## @brief Mean intervention score.
+    #: Mean intervention score.
     mean_intervention_score: float
 
-    ## @brief Final trust score.
+    #: Final trust score.
     final_trust: float
 
-    ## @brief Final trust variance.
+    #: Final trust variance.
     trust_variance: float
 
-    ## @brief Trust history over episodes.
+    #: Trust history over episodes.
     trust_history: List[float]
 
 
-## @brief Run a sequence of episodes and optionally print trust evolution.
-## @param config Simulation configuration values.
-## @param num_episodes Number of episodes to run.
-## @param supervisor_mode Supervisor policy mode: "undertrust", "calibrated", or "overtrust".
-## @param autonomy_mode Autonomy mode: "fixed" or "adaptive".
-## @param calibration_data Optional preloaded FEMA calibration data.
-## @param verbose If True, print per-episode output and final summary.
-## @return Experiment summary object.
 def run_trust_experiment(
     config: SimulationConfig,
     num_episodes: int,
@@ -106,6 +97,19 @@ def run_trust_experiment(
     calibration_data: FemaCalibrationData | None = None,
     verbose: bool = True,
 ) -> ExperimentRunSummary:
+    """Run a sequence of episodes and optionally print trust evolution.
+
+    Args:
+        config: Simulation configuration values.
+        num_episodes: Number of episodes to run.
+        supervisor_mode: Supervisor policy mode: "undertrust", "calibrated", or "overtrust".
+        autonomy_mode: Autonomy mode: "fixed" or "adaptive".
+        calibration_data: Optional preloaded FEMA calibration data.
+        verbose: If True, print per-episode output and final summary.
+
+    Returns:
+        Experiment summary object.
+    """
     run_rng = random.Random(config.seed)
     trust_model = BetaTrustModel()
     autonomy_config = AdaptiveAutonomyConfig()

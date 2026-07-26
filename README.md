@@ -6,8 +6,9 @@ The project is designed as a research prototype for exploring how adaptive auton
 
 ---
 
-## Documentation Page
-[Documentation for Trust-Aware Adaptive Autonomy](https://thebrianjdavis.github.io/Trust-Aware-Adaptive-Autonomy/index.html)
+## Documentation
+
+[Explore the Material for MkDocs portal](https://thebrianjdavis.github.io/Trust-Aware-Adaptive-Autonomy/) for the research overview, concepts, architecture, experiment guides, results, and generated Python API reference.
 
 ---
 
@@ -73,11 +74,8 @@ This produces a hybrid methodology:
 
 > FEMA data grounds the structure of the simulated environment, while stochastic modeling defines task uncertainty, task value, and outcome realization.
 
-Additional details are documented in:
-
-```text
-docs/DATASET_CALIBRATION.MD
-```
+Additional details are documented in the
+[data-grounding guide](https://thebrianjdavis.github.io/Trust-Aware-Adaptive-Autonomy/concepts/data-grounding/).
 
 ---
 
@@ -431,7 +429,11 @@ Single-seed visualization scripts produce:
 │   └── raw/
 │       └── us_disaster_declarations.csv
 ├── docs/
-│   └── DATASET_CALIBRATION.MD
+│   ├── api-reference/
+│   ├── architecture/
+│   ├── concepts/
+│   ├── experiments/
+│   └── user-guide/
 ├── results/
 │   ├── multi_seed/
 │   └── single_seed/
@@ -453,10 +455,11 @@ Single-seed visualization scripts produce:
 │   └── trust/
 │       └── beta_trust_model.py
 ├── config.py
-├── Doxyfile
 ├── LICENSE
 ├── main.py
+├── mkdocs.yml
 ├── README.md
+├── requirements-docs.txt
 └── requirements.txt
 ```
 
