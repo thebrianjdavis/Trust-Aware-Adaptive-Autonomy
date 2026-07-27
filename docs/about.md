@@ -23,7 +23,7 @@ Uncomment once photo added at: docs/assets/images/brian-davis.jpg
 
 <div class="author-profile__copy" markdown>
 
-Brian J. Davis is a Ph.D. candidate in Computer Science and Engineering at
+Brian J. Davis is a Ph.D. student in Computer Science and Engineering at
 Wright State University’s College of Engineering and Computer Science. He
 earned both his Bachelor of Science and Master of Science degrees in Computer
 Science from Wright State University.
