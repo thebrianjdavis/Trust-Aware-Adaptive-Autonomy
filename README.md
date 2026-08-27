@@ -336,23 +336,28 @@ python main.py --mode multi-seed --study standard --episodes 250 --num-seeds 250
 
 ## Testing
 
-Install the runtime and test dependencies, then run the full unit-test suite:
+Install Nox, then run the full unit-test suite in its isolated environment:
 
 ```bash
-python -m pip install -r requirements-dev.txt
-python -m pytest
+python -m pip install -r requirements-nox.txt
+nox -s tests
 ```
 
 The default pytest configuration measures statement and branch coverage for
-`src/`, prints missing lines, and fails below 95% total coverage. The test
-workflow runs this same command for every branch push and for pull requests
-targeting `main`.
+`src/`, prints missing lines, and fails below 95% total coverage. CI runs the
+equivalent `reports` session for every branch push and for pull requests
+targeting `main`, executing the tests once and retaining the generated HTML
+reports as an artifact.
 The test tree mirrors `src/`: a module at `src/<package>/<module>.py` must have
 a corresponding `tests/<package>/test_<module>.py`. A structural test enforces
 this convention in CI whenever a source module is added.
 
 The documentation site publishes the detailed test results and per-module
 coverage report produced from its latest successful `main` build.
+
+Run `nox -s ci` to reproduce the full quality pipeline locally: tests, HTML
+reports, a strict documentation build, and an assembled site. The canonical
+Python version lives in `.python-version`; both Nox and GitHub Actions read it.
 
 ---
 
@@ -483,13 +488,19 @@ Single-seed visualization scripts produce:
 │   ├── simulation/
 │   ├── supervisor/
 │   └── trust/
+├── .github/
+│   ├── actions/setup-python-environment/action.yml
+│   └── workflows/ci.yml
+├── .python-version
 ├── config.py
 ├── LICENSE
 ├── main.py
 ├── mkdocs.yml
+├── noxfile.py
 ├── README.md
 ├── requirements-docs.txt
 ├── requirements-dev.txt
+├── requirements-nox.txt
 └── requirements.txt
 ```
 

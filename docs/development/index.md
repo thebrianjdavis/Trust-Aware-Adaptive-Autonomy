@@ -4,6 +4,10 @@
 
 ```text
 .
+├── .github/
+│   ├── actions/           # Shared GitHub Actions setup steps
+│   └── workflows/         # Thin CI orchestration
+├── .python-version        # Canonical Python version
 ├── analysis/              # Result parsing, tables, and plots
 ├── configs/               # Scenario overrides
 ├── data/                  # Raw and calibrated FEMA data
@@ -26,24 +30,30 @@
 ├── config.py              # Canonical simulation configuration
 ├── main.py                # Command-line entry point
 ├── mkdocs.yml             # Documentation configuration
+├── noxfile.py             # Local and CI automation sessions
 ├── requirements-dev.txt   # Test and coverage dependencies
 ├── requirements-docs.txt  # Documentation build dependencies
+├── requirements-nox.txt   # Automation runner dependency
 └── requirements.txt       # Runtime dependencies
 ```
 
 ## Run the tests
 
-Install the test environment and run the suite from the repository root:
+Install Nox and run the test session from the repository root:
 
 ```bash
-python -m pip install -r requirements-dev.txt
-python -m pytest
+python -m pip install -r requirements-nox.txt
+nox -s tests
 ```
 
-The default command reports statement and branch coverage across `src/` and
-fails if total coverage falls below 95%. Every branch push and every pull
-request targeting `main` runs the same command through
-`.github/workflows/tests.yml`.
+Nox creates an isolated environment and installs the session dependencies. The
+test session reports statement and branch coverage across `src/` and fails if
+total coverage falls below 95%. Pass pytest arguments after `--`, for example
+`nox -s tests -- tests/planners/test_ai_planner.py`.
+
+Every branch push and every pull request targeting `main` runs the report
+session through `.github/workflows/ci.yml`. That session executes the same tests
+once while also generating the HTML artifacts used by the documentation site.
 
 ## Protect merges into main
 
@@ -82,8 +92,8 @@ configured in `mkdocs.yml`; do not use Doxygen directives such as `@brief`,
 `@param`, or `@return` in Python files.
 
 `tests/test_documentation.py` scans every tracked Python file with the standard
-library AST. The normal `python -m pytest` command—and therefore the `Unit tests`
-CI check—fails with the file, line, object type, and name when documentation is
+library AST. The normal `nox -s tests` command—and therefore the `Unit tests` CI
+check—fails with the file, line, object type, and name when documentation is
 missing. The same test module also reports the exact location of any Doxygen
 directive, keeping the documentation convention consistent as the repository
 grows.
@@ -91,8 +101,7 @@ grows.
 ## Build the documentation
 
 ```bash
-python -m pip install -r requirements.txt -r requirements-docs.txt
-mkdocs serve
+nox -s docs -- serve
 ```
 
 Open `http://127.0.0.1:8000/` for a live-reloading preview.
@@ -100,7 +109,7 @@ Open `http://127.0.0.1:8000/` for a live-reloading preview.
 Validate the same strict build used in CI:
 
 ```bash
-mkdocs build --strict
+nox -s docs
 ```
 
 Generated files are written to `site/` and should not be committed.
@@ -125,12 +134,35 @@ search, mobile navigation, copy buttons, light/dark palettes, and section tabs.
 
 ## Deployment
 
-Pushes to `main` and manual workflow dispatches run the Pages workflow. It:
+The `CI` workflow separates reusable commands from GitHub-specific
+orchestration:
 
-1. installs Python and documentation dependencies;
-2. builds with `mkdocs build --strict`;
-3. uploads the generated `site/` directory;
-4. deploys it through GitHub Pages.
+- `.python-version` is the single source for the Python version used locally,
+  by Nox, and by GitHub Actions.
+- `noxfile.py` defines independently runnable `tests`, `reports`, `docs`, and
+  `ci` sessions.
+- `.github/actions/setup-python-environment/action.yml` centralizes Python,
+  pip-cache, and Nox setup for every job.
+- `.github/workflows/ci.yml` defines event rules, job dependencies, artifact
+  transfer, and deployment permissions.
 
-Pull requests build the portal without deploying it, catching broken links,
-imports, and configuration errors before merge.
+Use `nox -s ci` to reproduce the complete pipeline locally. It runs the tests
+once, generates the HTML reports, performs a strict documentation build, and
+places the reports in the generated site.
+
+Every push runs the `Unit tests` job. Pull requests targeting `main` also build
+the documentation but do not deploy it. A successful push to `main`:
+
+1. runs the tests and coverage gate;
+2. uploads the generated reports as a workflow artifact;
+3. builds the documentation and adds that exact artifact to the site;
+4. deploys the assembled site through GitHub Pages.
+
+The test report artifact is retained for 14 days. Jobs have explicit timeouts,
+concurrent superseded runs are cancelled away from `main`, and write
+permissions are limited to the deployment job.
+
+When adding automation, prefer a Nox session for locally reproducible behavior,
+extend the composite action only for setup shared by multiple jobs, and keep
+event conditions and job relationships in the workflow. A separate rules file
+is unnecessary while GitHub Actions can express those conditions directly.

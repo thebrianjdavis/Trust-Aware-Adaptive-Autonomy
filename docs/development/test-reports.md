@@ -34,15 +34,16 @@ rest of the site. A failed test or coverage gate prevents deployment.
 
 ## Generate the reports locally
 
-After installing `requirements-dev.txt`, build the site and write the reports
-into the generated site directory:
+After installing the automation dependency, run the complete local CI session:
 
 ```bash
-mkdocs build --strict
-python -m pytest \
-  --html=site/development/reports/test-results.html \
-  --self-contained-html \
-  --cov-report=html:site/development/reports/coverage
+python -m pip install -r requirements-nox.txt
+nox -s ci
 ```
 
+This runs the tests once, writes the intermediate reports to `build/reports/`,
+builds the documentation strictly, and copies the reports into `site/`.
 Open `site/development/test-reports/index.html` to navigate to both reports.
+
+To generate only the report artifact used between CI jobs, run
+`nox -s reports`. To validate only the documentation, run `nox -s docs`.
