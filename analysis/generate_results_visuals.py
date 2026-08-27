@@ -1,7 +1,14 @@
-"""Generate polished figures and tables from single-seed experiment results."""
+"""Generate polished figures and tables from single-seed experiment results.
 
-## @file generate_results_visuals.py
-## @brief Generate polished figures and summary tables from experiment result files.
+Attributes:
+    SUPERVISOR_ORDER: Canonical supervisor ordering for plots and tables.
+    SUPERVISOR_DISPLAY_LABELS: Human-readable labels for supervisor modes.
+    CONDITION_ORDER: Canonical fixed/adaptive condition ordering.
+    CONDITION_DISPLAY_LABELS: Human-readable labels for experiment conditions.
+    AUTONOMY_MARKERS: Plot markers keyed by autonomy mode.
+    SUPERVISOR_COLORS: Plot colors keyed by supervisor mode.
+
+"""
 
 from __future__ import annotations
 
@@ -16,17 +23,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-## @brief Canonical supervisor ordering for plots and tables.
 SUPERVISOR_ORDER: List[str] = ["undertrust", "calibrated", "overtrust"]
 
-## @brief Human-readable supervisor labels.
 SUPERVISOR_DISPLAY_LABELS: Dict[str, str] = {
     "undertrust": "Undertrust",
     "calibrated": "Calibrated",
     "overtrust": "Overtrust",
 }
 
-## @brief Canonical condition ordering for plots and tables.
 CONDITION_ORDER: List[str] = [
     "undertrust_fixed",
     "undertrust_adaptive",
@@ -36,7 +40,6 @@ CONDITION_ORDER: List[str] = [
     "overtrust_adaptive",
 ]
 
-## @brief Human-readable condition labels.
 CONDITION_DISPLAY_LABELS: Dict[str, str] = {
     "undertrust_fixed": "Undertrust\nFixed",
     "undertrust_adaptive": "Undertrust\nAdaptive",
@@ -46,13 +49,11 @@ CONDITION_DISPLAY_LABELS: Dict[str, str] = {
     "overtrust_adaptive": "Overtrust\nAdaptive",
 }
 
-## @brief Fixed marker mapping for autonomy mode.
 AUTONOMY_MARKERS: Dict[str, str] = {
     "fixed": "o",
     "adaptive": "s",
 }
 
-## @brief Fixed color mapping for supervisor mode.
 SUPERVISOR_COLORS: Dict[str, str] = {
     "undertrust": "tab:blue",
     "calibrated": "tab:green",
@@ -60,68 +61,63 @@ SUPERVISOR_COLORS: Dict[str, str] = {
 }
 
 
-## @brief Stores parsed summary information for one experiment run.
 @dataclass
 class ExperimentSummary:
-    """Store parsed summary metrics for one experiment condition."""
+    """Store parsed summary metrics for one experiment condition.
 
-    ## @brief Supervisor policy mode.
+    Attributes:
+        supervisor_mode: Supervisor policy mode.
+        autonomy_mode: Autonomy mode.
+        ai_wins: Number of AI-plan wins.
+        baseline_wins: Number of baseline-plan wins.
+        ties: Number of tied plan comparisons.
+        ai_accepted: Number of accepted AI plans.
+        ai_overridden: Number of overridden AI plans.
+        weak_recommendations: Number of weak recommendations.
+        normal_recommendations: Number of normal recommendations.
+        strong_recommendations: Number of strong recommendations.
+        mean_executed_utility: Mean utility of executed plans.
+        mean_ai_confidence: Mean AI confidence.
+        mean_intervention_score: Mean adaptive-autonomy intervention score.
+        final_trust: Trust value after the final episode.
+        trust_variance: Variance of the final trust distribution.
+        trust_history: Trust values recorded over the episodes.
+        filename: Name of the source results file.
+
+    """
+
     supervisor_mode: str
-
-    ## @brief Autonomy mode.
     autonomy_mode: str
-
-    ## @brief Number of AI wins.
     ai_wins: int
-
-    ## @brief Number of baseline wins.
     baseline_wins: int
-
-    ## @brief Number of ties.
     ties: int
-
-    ## @brief Number of times the AI plan was accepted.
     ai_accepted: int
-
-    ## @brief Number of times the AI plan was overridden.
     ai_overridden: int
-
-    ## @brief Number of weak recommendations.
     weak_recommendations: int
-
-    ## @brief Number of normal recommendations.
     normal_recommendations: int
-
-    ## @brief Number of strong recommendations.
     strong_recommendations: int
-
-    ## @brief Mean executed utility.
     mean_executed_utility: float
-
-    ## @brief Mean AI confidence.
     mean_ai_confidence: float
-
-    ## @brief Mean intervention score.
     mean_intervention_score: float
-
-    ## @brief Final trust value.
     final_trust: float
-
-    ## @brief Trust variance.
     trust_variance: float
-
-    ## @brief Trust history over episodes.
     trust_history: List[float]
-
-    ## @brief Source filename.
     filename: str
 
 
-## @brief Parse a single experiment results file.
-## @param filepath Path to the results text file.
-## @return Parsed experiment summary.
 def parse_results_file(filepath: Path) -> ExperimentSummary:
-    """Parse a text results file into a structured experiment summary."""
+    """Parse a text results file into a structured experiment summary.
+
+    Args:
+        filepath: Path to a single experiment's text report.
+
+    Returns:
+        Parsed condition metrics and trust history.
+
+    Raises:
+        ValueError: If a required labeled value is absent or malformed.
+
+    """
     text = filepath.read_text()
 
     def extract_string(label: str) -> str:
@@ -166,11 +162,16 @@ def parse_results_file(filepath: Path) -> ExperimentSummary:
     )
 
 
-## @brief Convert experiment summaries into a dataframe.
-## @param summaries Parsed experiment summaries.
-## @return Dataframe of summary values.
 def build_summary_dataframe(summaries: List[ExperimentSummary]) -> pd.DataFrame:
-    """Convert parsed experiment summaries into a tabular dataset."""
+    """Convert parsed experiment summaries into a tabular dataset.
+
+    Args:
+        summaries: Parsed summaries for the experiment conditions.
+
+    Returns:
+        One dataframe row per experiment condition.
+
+    """
     rows: List[Dict[str, object]] = []
 
     for summary in summaries:
@@ -199,11 +200,16 @@ def build_summary_dataframe(summaries: List[ExperimentSummary]) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-## @brief Add derived acceptance, override, and recommendation-rate columns.
-## @param dataframe Raw summary dataframe.
-## @return Dataframe with added derived columns.
 def add_rate_columns(dataframe: pd.DataFrame) -> pd.DataFrame:
-    """Add acceptance, override, and recommendation proportion columns."""
+    """Add acceptance, override, and recommendation proportion columns.
+
+    Args:
+        dataframe: Raw condition summary table.
+
+    Returns:
+        A copy of the summary table with derived rate columns.
+
+    """
     enriched_df = dataframe.copy()
 
     total_decisions = enriched_df["ai_accepted"] + enriched_df["ai_overridden"]
@@ -222,11 +228,16 @@ def add_rate_columns(dataframe: pd.DataFrame) -> pd.DataFrame:
     return enriched_df
 
 
-## @brief Build a compact presentation-friendly summary table.
-## @param dataframe Summary dataframe with rate columns.
-## @return Compact summary dataframe for reporting and slides.
 def build_presentation_summary_table(dataframe: pd.DataFrame) -> pd.DataFrame:
-    """Build a compact fixed-versus-adaptive presentation table."""
+    """Build a compact fixed-versus-adaptive presentation table.
+
+    Args:
+        dataframe: Condition summary table with derived rates.
+
+    Returns:
+        Supervisor-level fixed and adaptive utility and acceptance comparisons.
+
+    """
     utility_pivot_df = (
         dataframe.pivot(
             index="supervisor_mode",
@@ -277,19 +288,27 @@ def build_presentation_summary_table(dataframe: pd.DataFrame) -> pd.DataFrame:
     return presentation_df
 
 
-## @brief Save a dataframe as CSV.
-## @param dataframe Dataframe to save.
-## @param output_path Output CSV path.
 def save_table(dataframe: pd.DataFrame, output_path: Path) -> None:
-    """Write a dataframe to a header-bearing CSV file."""
+    """Write a dataframe to a header-bearing CSV file.
+
+    Args:
+        dataframe: Table to serialize.
+        output_path: Destination path for the CSV file.
+
+    """
     dataframe.to_csv(output_path, index=False)
 
 
-## @brief Compute a consistent utility-axis range that avoids exaggerating tiny differences.
-## @param dataframe Summary dataframe with rate columns.
-## @return Tuple of y-axis minimum and maximum.
 def get_utility_axis_limits(dataframe: pd.DataFrame) -> tuple[float, float]:
-    """Choose readable utility-axis limits without exaggerating small changes."""
+    """Choose utility-axis limits without exaggerating small differences.
+
+    Args:
+        dataframe: Condition summary table containing executed utility.
+
+    Returns:
+        The lower and upper utility-axis bounds.
+
+    """
     utility_min = float(dataframe["mean_executed_utility"].min())
     utility_max = float(dataframe["mean_executed_utility"].max())
 
@@ -302,14 +321,17 @@ def get_utility_axis_limits(dataframe: pd.DataFrame) -> tuple[float, float]:
     return y_min, y_max
 
 
-## @brief Plot AI acceptance vs override rates as 100% stacked bars.
-## @param dataframe Summary dataframe with rate columns.
-## @param output_path Output figure path.
 def plot_acceptance_rate_comparison(
     dataframe: pd.DataFrame,
     output_path: Path,
 ) -> None:
-    """Plot acceptance and override proportions as stacked bars."""
+    """Plot acceptance and override proportions as stacked bars.
+
+    Args:
+        dataframe: Condition summary table with derived rates.
+        output_path: Destination path for the figure.
+
+    """
     plot_df = dataframe.copy()
     plot_df["condition_label"] = pd.Categorical(
         plot_df["condition_label"],
@@ -334,14 +356,17 @@ def plot_acceptance_rate_comparison(
     plt.close()
 
 
-## @brief Plot recommendation strength distribution for adaptive conditions only.
-## @param dataframe Summary dataframe with rate columns.
-## @param output_path Output figure path.
 def plot_recommendation_strength_distribution(
     dataframe: pd.DataFrame,
     output_path: Path,
 ) -> None:
-    """Plot recommendation-strength proportions for adaptive conditions."""
+    """Plot recommendation-strength proportions for adaptive conditions.
+
+    Args:
+        dataframe: Condition summary table with recommendation rates.
+        output_path: Destination path for the figure.
+
+    """
     adaptive_df = dataframe[dataframe["autonomy_mode"] == "adaptive"].copy()
     adaptive_df["supervisor_mode"] = pd.Categorical(
         adaptive_df["supervisor_mode"],
@@ -370,14 +395,17 @@ def plot_recommendation_strength_distribution(
     plt.close()
 
 
-## @brief Plot fixed-to-adaptive trajectories in acceptance-utility space.
-## @param dataframe Summary dataframe with rate columns.
-## @param output_path Output figure path.
 def plot_acceptance_utility_trajectory(
     dataframe: pd.DataFrame,
     output_path: Path,
 ) -> None:
-    """Plot fixed-to-adaptive trajectories in acceptance-utility space."""
+    """Plot fixed-to-adaptive trajectories in acceptance-utility space.
+
+    Args:
+        dataframe: Condition summary table with utility and acceptance rates.
+        output_path: Destination path for the figure.
+
+    """
     y_min, y_max = get_utility_axis_limits(dataframe)
     x_min = max(0.0, float(dataframe["accept_rate"].min()) - 0.05)
     x_max = min(1.0, float(dataframe["accept_rate"].max()) + 0.05)
@@ -480,14 +508,17 @@ def plot_acceptance_utility_trajectory(
     plt.close()
 
 
-## @brief Create a slopegraph/table combo figure for presentation.
-## @param presentation_table Compact presentation summary table.
-## @param output_path Output figure path.
 def plot_slopegraph_table_combo(
     presentation_table: pd.DataFrame,
     output_path: Path,
 ) -> None:
-    """Create a presentation figure combining a utility slopegraph and table."""
+    """Create a presentation figure combining a utility slopegraph and table.
+
+    Args:
+        presentation_table: Compact fixed-versus-adaptive summary.
+        output_path: Destination path for the figure.
+
+    """
     utility_values = list(presentation_table["fixed_utility"]) + list(
         presentation_table["adaptive_utility"]
     )
@@ -635,11 +666,19 @@ def plot_slopegraph_table_combo(
     plt.close()
 
 
-## @brief Find the most recent complete single-seed batch directory.
-## @param results_dir Path to the single_seed results directory.
-## @return Tuple containing the latest batch directory and its six result files.
 def find_latest_complete_batch(results_dir: Path) -> tuple[Path, List[Path]]:
-    """Return the latest batch containing all six condition result files."""
+    """Find the latest batch containing all six condition result files.
+
+    Args:
+        results_dir: Directory containing single-seed batch directories.
+
+    Returns:
+        The latest complete batch directory and its six text reports.
+
+    Raises:
+        ValueError: If no complete single-seed batch exists.
+
+    """
     batch_directories = sorted(
         batch_path for batch_path in results_dir.iterdir() if batch_path.is_dir()
     )
@@ -662,19 +701,25 @@ def find_latest_complete_batch(results_dir: Path) -> tuple[Path, List[Path]]:
     return latest_batch_directory, latest_batch_files
 
 
-## @brief Ensure output directories exist.
-## @param figures_dir Figures output directory.
-## @param tables_dir Tables output directory.
 def ensure_output_directories(figures_dir: Path, tables_dir: Path) -> None:
-    """Create the figure and table output directories when needed."""
+    """Create the figure and table output directories when needed.
+
+    Args:
+        figures_dir: Directory for generated figures.
+        tables_dir: Directory for generated tables.
+
+    """
     figures_dir.mkdir(parents=True, exist_ok=True)
     tables_dir.mkdir(parents=True, exist_ok=True)
 
 
-## @brief Parse command-line arguments.
-## @return Parsed argument namespace.
 def parse_arguments() -> argparse.Namespace:
-    """Parse command-line options for single-seed visualization generation."""
+    """Parse command-line options for single-seed visualization generation.
+
+    Returns:
+        The validated command-line argument namespace.
+
+    """
     parser = argparse.ArgumentParser(
         description="Generate single-seed result figures.",
     )
@@ -689,7 +734,6 @@ def parse_arguments() -> argparse.Namespace:
     return arguments
 
 
-## @brief Program entry point.
 def main() -> None:
     """Load one complete single-seed batch and generate its report artifacts."""
     arguments = parse_arguments()

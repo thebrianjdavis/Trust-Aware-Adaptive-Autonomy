@@ -1,11 +1,13 @@
-"""Tests that enforce complete Python docstring coverage."""
+"""Tests that enforce consistent, complete Python documentation."""
 
 import ast
+import re
 import subprocess
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DOCUMENTABLE_NODE_TYPES = (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)
+DOXYGEN_COMMENT_PATTERN = re.compile(r"^\s*#{1,2}\s*@\w+")
 
 
 def get_tracked_python_files() -> list[Path]:
@@ -50,6 +52,21 @@ def find_missing_docstrings(python_path: Path) -> list[str]:
     return missing_docstrings
 
 
+def find_doxygen_comments(python_path: Path) -> list[str]:
+    """Return descriptions of Doxygen directives in one Python file."""
+    relative_path = python_path.relative_to(PROJECT_ROOT)
+    doxygen_comments = []
+
+    for line_number, line in enumerate(
+        python_path.read_text(encoding="utf-8").splitlines(),
+        start=1,
+    ):
+        if DOXYGEN_COMMENT_PATTERN.match(line):
+            doxygen_comments.append(f"{relative_path}:{line_number}: {line.strip()}")
+
+    return doxygen_comments
+
+
 def test_every_python_object_has_a_docstring() -> None:
     """Require docstrings on tracked modules, classes, methods, and functions."""
     missing_docstrings = []
@@ -60,4 +77,17 @@ def test_every_python_object_has_a_docstring() -> None:
     assert not missing_docstrings, (
         "Every Python module, class, method, and function must have a docstring:\n"
         + "\n".join(missing_docstrings)
+    )
+
+
+def test_python_files_do_not_use_doxygen_comments() -> None:
+    """Require Python documentation to use docstrings instead of Doxygen tags."""
+    doxygen_comments = []
+
+    for python_path in get_tracked_python_files():
+        doxygen_comments.extend(find_doxygen_comments(python_path))
+
+    assert not doxygen_comments, (
+        "Replace Doxygen directives with Google-style Python docstrings:\n"
+        + "\n".join(doxygen_comments)
     )

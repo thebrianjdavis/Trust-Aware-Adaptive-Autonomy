@@ -77,11 +77,16 @@ must have a Python docstring. Test docstrings should state the behavior being
 verified, while implementation docstrings should describe the object's purpose
 and contract. Use a string literal immediately inside the object rather than a
 regular comment so Python, `help()`, IDEs, and mkdocstrings can discover it.
+Use the Google-style `Args`, `Returns`, `Raises`, and `Attributes` sections
+configured in `mkdocs.yml`; do not use Doxygen directives such as `@brief`,
+`@param`, or `@return` in Python files.
 
 `tests/test_documentation.py` scans every tracked Python file with the standard
 library AST. The normal `python -m pytest` command—and therefore the `Unit tests`
 CI check—fails with the file, line, object type, and name when documentation is
-missing.
+missing. The same test module also reports the exact location of any Doxygen
+directive, keeping the documentation convention consistent as the repository
+grows.
 
 ## Build the documentation
 
