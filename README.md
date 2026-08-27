@@ -334,6 +334,28 @@ python main.py --mode multi-seed --study standard --episodes 250 --num-seeds 250
 
 ---
 
+## Testing
+
+Install the runtime and test dependencies, then run the full unit-test suite:
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m pytest
+```
+
+The default pytest configuration measures statement and branch coverage for
+`src/`, prints missing lines, and fails below 95% total coverage. The test
+workflow runs this same command for every branch push and for pull requests
+targeting `main`.
+The test tree mirrors `src/`: a module at `src/<package>/<module>.py` must have
+a corresponding `tests/<package>/test_<module>.py`. A structural test enforces
+this convention in CI whenever a source module is added.
+
+The documentation site publishes the detailed test results and per-module
+coverage report produced from its latest successful `main` build.
+
+---
+
 ## Output Structure
 
 Experiment results are written under `results/`.
@@ -454,12 +476,20 @@ Single-seed visualization scripts produce:
 │   │   └── supervisor_policies.py
 │   └── trust/
 │       └── beta_trust_model.py
+├── tests/                  # Mirrors the src package structure
+│   ├── autonomy/
+│   ├── environment/
+│   ├── planners/
+│   ├── simulation/
+│   ├── supervisor/
+│   └── trust/
 ├── config.py
 ├── LICENSE
 ├── main.py
 ├── mkdocs.yml
 ├── README.md
 ├── requirements-docs.txt
+├── requirements-dev.txt
 └── requirements.txt
 ```
 

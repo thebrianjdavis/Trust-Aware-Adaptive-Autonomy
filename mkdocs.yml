@@ -71,6 +71,7 @@ nav:
       - Data Calibration: api-reference/data-calibration.md
   - Development:
       - Development Guide: development/index.md
+      - Test Results and Coverage: development/test-reports.md
   - About: about.md
 
 plugins:

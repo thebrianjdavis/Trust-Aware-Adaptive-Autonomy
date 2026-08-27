@@ -16,12 +16,59 @@
 │   ├── simulation/        # Outcome and experiment orchestration
 │   ├── supervisor/        # Supervisor behavior policies
 │   └── trust/             # Bayesian trust model
+├── tests/                  # Mirrors the src package structure
+│   ├── autonomy/
+│   ├── environment/
+│   ├── planners/
+│   ├── simulation/
+│   ├── supervisor/
+│   └── trust/
 ├── config.py              # Canonical simulation configuration
 ├── main.py                # Command-line entry point
 ├── mkdocs.yml             # Documentation configuration
+├── requirements-dev.txt   # Test and coverage dependencies
 ├── requirements-docs.txt  # Documentation build dependencies
 └── requirements.txt       # Runtime dependencies
 ```
+
+## Run the tests
+
+Install the test environment and run the suite from the repository root:
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m pytest
+```
+
+The default command reports statement and branch coverage across `src/` and
+fails if total coverage falls below 95%. Every branch push and every pull
+request targeting `main` runs the same command through
+`.github/workflows/tests.yml`.
+
+## Protect merges into main
+
+The workflow exposes a uniquely named `Unit tests` status check for pull
+requests targeting `main`. To make a failing test block the merge button, the
+repository's ruleset or branch protection for `main` must require this status
+check. In the GitHub repository settings:
+
+1. Create or edit the branch ruleset/protection rule targeting `main`.
+2. Enable **Require status checks to pass before merging**.
+3. Add **Unit tests** as a required status check.
+4. Enable **Do not allow bypassing** if the requirement should also apply to
+   repository administrators.
+
+GitHub only offers a check for selection after it has run in the repository, so
+push this workflow once before selecting `Unit tests` in the protection rule.
+
+The documentation workflow also publishes human-readable
+[test results and coverage reports](test-reports.md) from the exact commit used
+to build the site. These reports refresh after a successful push to `main`.
+
+Test modules follow a one-to-one naming convention. Source code at
+`src/<package>/<module>.py` belongs in `tests/<package>/test_<module>.py`.
+`tests/test_source_layout.py` enforces this mapping, so CI identifies a missing
+test module as soon as a new source module is introduced.
 
 ## Build the documentation
 
