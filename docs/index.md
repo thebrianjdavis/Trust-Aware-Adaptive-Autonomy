@@ -117,6 +117,10 @@ depending on the selected run mode.
     [Results](results/index.md) ·
     [Data grounding](concepts/data-grounding.md)
 
+-   **Verify project quality**
+
+    [Test results and coverage](development/test-reports.md)
+
 </div>
 
 <p class="project-attribution" markdown>
