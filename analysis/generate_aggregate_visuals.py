@@ -1,5 +1,12 @@
-## @file generate_aggregate_visuals.py
-## @brief Generate aggregate Monte Carlo figures from multi-seed CSV results.
+"""Generate aggregate Monte Carlo figures from multi-seed CSV results.
+
+Attributes:
+    SUPERVISOR_ORDER: Canonical supervisor ordering for plots and tables.
+    SUPERVISOR_DISPLAY_LABELS: Human-readable labels for supervisor modes.
+    AUTONOMY_MARKERS: Plot markers keyed by autonomy mode.
+    SUPERVISOR_COLORS: Plot colors keyed by supervisor mode.
+
+"""
 
 from __future__ import annotations
 
@@ -12,23 +19,19 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-## @brief Canonical supervisor ordering for plots and tables.
 SUPERVISOR_ORDER: List[str] = ["undertrust", "calibrated", "overtrust"]
 
-## @brief Human-readable supervisor labels.
 SUPERVISOR_DISPLAY_LABELS: Dict[str, str] = {
     "undertrust": "Undertrust",
     "calibrated": "Calibrated",
     "overtrust": "Overtrust",
 }
 
-## @brief Fixed marker mapping for autonomy mode.
 AUTONOMY_MARKERS: Dict[str, str] = {
     "fixed": "o",
     "adaptive": "s",
 }
 
-## @brief Fixed color mapping for supervisor mode.
 SUPERVISOR_COLORS: Dict[str, str] = {
     "undertrust": "tab:blue",
     "calibrated": "tab:green",
@@ -36,18 +39,31 @@ SUPERVISOR_COLORS: Dict[str, str] = {
 }
 
 
-## @brief Ensure output directories exist.
-## @param figures_dir Figures output directory.
-## @param tables_dir Tables output directory.
 def ensure_output_directories(figures_dir: Path, tables_dir: Path) -> None:
+    """Create the figure and table output directories when needed.
+
+    Args:
+        figures_dir: Directory for generated figures.
+        tables_dir: Directory for generated tables.
+
+    """
     figures_dir.mkdir(parents=True, exist_ok=True)
     tables_dir.mkdir(parents=True, exist_ok=True)
 
 
-## @brief Find the latest multi-seed batch directory.
-## @param results_dir Base results directory.
-## @return Path to latest multi-seed batch directory.
 def find_latest_multi_seed_batch(results_dir: Path) -> Path:
+    """Find the most recent multi-seed batch directory.
+
+    Args:
+        results_dir: Base experiment-results directory.
+
+    Returns:
+        The latest directory under ``results_dir/multi_seed``.
+
+    Raises:
+        ValueError: If no multi-seed batch directory is available.
+
+    """
     multi_seed_root = results_dir / "multi_seed"
 
     if not multi_seed_root.exists():
@@ -64,10 +80,17 @@ def find_latest_multi_seed_batch(results_dir: Path) -> Path:
     return latest_batch_directory
 
 
-## @brief Compute mean, standard deviation, and 95% CI for a numeric series.
-## @param series Numeric pandas series.
-## @return Tuple of mean, standard deviation, and 95% CI.
 def compute_mean_std_ci(series: pd.Series) -> Tuple[float, float, float]:
+    """Calculate summary statistics for a numeric series.
+
+    Args:
+        series: Numeric observations to summarize.
+
+    Returns:
+        The mean, sample standard deviation, and normal-approximation 95%
+        confidence interval.
+
+    """
     count = int(series.count())
     mean_value = float(series.mean())
 
@@ -82,10 +105,17 @@ def compute_mean_std_ci(series: pd.Series) -> Tuple[float, float, float]:
     return mean_value, std_value, ci95_value
 
 
-## @brief Build a presentation-friendly paired-delta summary table.
-## @param delta_dataframe Paired adaptive-minus-fixed delta dataframe.
-## @return Aggregate paired-delta summary dataframe.
 def build_paired_delta_summary_table(delta_dataframe: pd.DataFrame) -> pd.DataFrame:
+    """Aggregate paired adaptive-minus-fixed deltas for presentation.
+
+    Args:
+        delta_dataframe: Seed-level adaptive-minus-fixed deltas.
+
+    Returns:
+        Supervisor-level utility and acceptance means, deviations, and 95%
+        confidence intervals.
+
+    """
     rows: List[Dict[str, float | str]] = []
 
     for supervisor_mode in SUPERVISOR_ORDER:
@@ -116,13 +146,17 @@ def build_paired_delta_summary_table(delta_dataframe: pd.DataFrame) -> pd.DataFr
     return summary_dataframe
 
 
-## @brief Plot mean adaptive-minus-fixed utility with 95% CI.
-## @param delta_dataframe Paired adaptive-minus-fixed delta dataframe.
-## @param output_path Output figure path.
 def plot_utility_delta_with_ci(
     delta_dataframe: pd.DataFrame,
     output_path: Path,
 ) -> None:
+    """Plot adaptive-minus-fixed utility with 95% confidence intervals.
+
+    Args:
+        delta_dataframe: Seed-level adaptive-minus-fixed deltas.
+        output_path: Destination path for the figure.
+
+    """
     x_labels: List[str] = []
     mean_values: List[float] = []
     ci_values: List[float] = []
@@ -153,13 +187,17 @@ def plot_utility_delta_with_ci(
     plt.close()
 
 
-## @brief Plot mean adaptive-minus-fixed acceptance change with 95% CI.
-## @param delta_dataframe Paired adaptive-minus-fixed delta dataframe.
-## @param output_path Output figure path.
 def plot_acceptance_delta_with_ci(
     delta_dataframe: pd.DataFrame,
     output_path: Path,
 ) -> None:
+    """Plot acceptance-rate deltas with 95% confidence intervals.
+
+    Args:
+        delta_dataframe: Seed-level adaptive-minus-fixed deltas.
+        output_path: Destination path for the figure.
+
+    """
     x_labels: List[str] = []
     mean_values: List[float] = []
     ci_values: List[float] = []
@@ -190,13 +228,17 @@ def plot_acceptance_delta_with_ci(
     plt.close()
 
 
-## @brief Plot average recommendation strength distribution for adaptive runs.
-## @param raw_dataframe Seed-level results dataframe.
-## @param output_path Output figure path.
 def plot_aggregate_recommendation_strength_distribution(
     raw_dataframe: pd.DataFrame,
     output_path: Path,
 ) -> None:
+    """Plot mean recommendation-strength proportions for adaptive runs.
+
+    Args:
+        raw_dataframe: Seed-level experiment results.
+        output_path: Destination path for the figure.
+
+    """
     adaptive_df = raw_dataframe[raw_dataframe["autonomy_mode"] == "adaptive"].copy()
     adaptive_df["supervisor_mode"] = pd.Categorical(
         adaptive_df["supervisor_mode"],
@@ -233,14 +275,18 @@ def plot_aggregate_recommendation_strength_distribution(
     plt.close()
 
 
-## @brief Plot aggregate fixed-to-adaptive trajectories with error bars.
-## @param raw_dataframe Seed-level results dataframe.
-## @param output_path Output figure path.
 def plot_aggregate_acceptance_utility_trajectory(
     raw_dataframe: pd.DataFrame,
     output_path: Path,
 ) -> None:
-    ## Show the full acceptance range for interpretability.
+    """Plot aggregate fixed-to-adaptive acceptance and utility trajectories.
+
+    Args:
+        raw_dataframe: Seed-level experiment results.
+        output_path: Destination path for the figure.
+
+    """
+    # Show the full acceptance range for interpretability.
     x_min = 0.0
     x_max = 1.0
 
@@ -355,7 +401,7 @@ def plot_aggregate_acceptance_utility_trajectory(
             color=color_value,
         )
 
-    ## Build y-axis from what is actually plotted.
+    # Build the y-axis from what is actually plotted.
     y_min = min(utility_lower_bounds)
     y_max = max(utility_upper_bounds)
 
@@ -363,7 +409,7 @@ def plot_aggregate_acceptance_utility_trajectory(
     y_min -= y_padding
     y_max += y_padding
 
-    ## Keep a modest minimum span so the plot is readable but not exaggerated.
+    # Keep a modest minimum span so the plot is readable but not exaggerated.
     minimum_span = 1.2
     current_span = y_max - y_min
 
@@ -408,12 +454,19 @@ def plot_aggregate_acceptance_utility_trajectory(
     plt.close()
 
 
-## @brief Build an aggregate summary table for ablation deltas.
-## @param ablation_delta_dataframe Ablation delta dataframe.
-## @return Summary dataframe grouped by supervisor and comparison mode.
 def build_ablation_delta_summary_table(
     ablation_delta_dataframe: pd.DataFrame,
 ) -> pd.DataFrame:
+    """Aggregate ablation deltas by supervisor and comparison mode.
+
+    Args:
+        ablation_delta_dataframe: Seed-level ablation deltas from fixed autonomy.
+
+    Returns:
+        Metric means, sample deviations, and 95% confidence intervals grouped
+        by supervisor and comparison mode.
+
+    """
     metric_columns = [
         "mean_executed_utility_delta",
         "accept_rate_delta",
@@ -461,13 +514,6 @@ def build_ablation_delta_summary_table(
     return summary_dataframe
 
 
-## @brief Plot ablation delta metric grouped by supervisor and comparison mode.
-## @param summary_dataframe Ablation summary dataframe.
-## @param metric_mean_column Mean metric column name.
-## @param metric_ci_column CI metric column name.
-## @param title Plot title.
-## @param y_label Y-axis label.
-## @param output_path Output figure path.
 def plot_ablation_delta_grouped_bars(
     summary_dataframe: pd.DataFrame,
     metric_mean_column: str,
@@ -476,6 +522,17 @@ def plot_ablation_delta_grouped_bars(
     y_label: str,
     output_path: Path,
 ) -> None:
+    """Plot an ablation metric by supervisor and comparison mode.
+
+    Args:
+        summary_dataframe: Supervisor-level ablation summary.
+        metric_mean_column: Column containing metric means.
+        metric_ci_column: Column containing 95% confidence intervals.
+        title: Figure title.
+        y_label: Label for the vertical axis.
+        output_path: Destination path for the figure.
+
+    """
     comparison_modes = [
         "confidence_trust",
         "behavior_only",
@@ -535,9 +592,13 @@ def plot_ablation_delta_grouped_bars(
     plt.close()
 
 
-## @brief Parse command-line arguments.
-## @return Parsed argument namespace.
 def parse_arguments() -> argparse.Namespace:
+    """Parse command-line options for aggregate visualization generation.
+
+    Returns:
+        The validated command-line argument namespace.
+
+    """
     parser = argparse.ArgumentParser(
         description="Generate aggregate Monte Carlo figures.",
     )
@@ -552,8 +613,8 @@ def parse_arguments() -> argparse.Namespace:
     return arguments
 
 
-## @brief Program entry point.
 def main() -> None:
+    """Load one multi-seed batch and generate its tables and figures."""
     arguments = parse_arguments()
     results_dir = Path("results")
 

@@ -1,4 +1,4 @@
-name: Build and deploy MkDocs
+name: Build, test, and deploy MkDocs
 
 on:
   push:
@@ -16,7 +16,7 @@ permissions:
 
 concurrency:
   group: "pages"
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -32,15 +32,25 @@ jobs:
           cache: pip
           cache-dependency-path: |
             requirements.txt
+            requirements-dev.txt
             requirements-docs.txt
 
-      - name: Install project and documentation dependencies
+      - name: Install project, test, and documentation dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt -r requirements-docs.txt
+          python -m pip install -r requirements-dev.txt -r requirements-docs.txt
 
       - name: Build documentation
         run: mkdocs build --strict
+
+      - name: Run tests and generate site reports
+        run: |
+          python -m pytest \
+            --html=site/development/reports/test-results.html \
+            --self-contained-html \
+            --metadata "Commit" "${GITHUB_SHA}" \
+            --metadata "Branch" "${GITHUB_REF_NAME}" \
+            --cov-report=html:site/development/reports/coverage
 
       - name: Upload Pages artifact
         if: github.event_name != 'pull_request'
@@ -59,4 +69,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        

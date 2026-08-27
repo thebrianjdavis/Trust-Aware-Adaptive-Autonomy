@@ -1,5 +1,8 @@
-## @file main.py
-## @brief Entry point for single-seed, multi-seed, ablation, and sensitivity experiments.
+"""Run and report trust-aware adaptive-autonomy experiments.
+
+This module provides the command-line entry point and orchestration helpers for
+single-seed, multi-seed, ablation, and sensitivity studies.
+"""
 
 import argparse
 import json
@@ -21,23 +24,38 @@ from data.calibration.fema_distribution import load_fema_calibration_data
 from src.simulation.experiment_runner import ExperimentRunSummary, run_trust_experiment
 
 
-## @brief Create results directory if it does not already exist.
-## @param directory_path Path to results directory.
 def ensure_results_directory(directory_path: str) -> None:
+    """Create a results directory when it does not already exist.
+
+    Args:
+        directory_path: Path to the results directory.
+
+    """
     os.makedirs(directory_path, exist_ok=True)
 
 
-## @brief Generate a timestamp string for the current run.
-## @return Timestamp string formatted as YYYYMMDDHHMMSS.
 def generate_run_timestamp() -> str:
+    """Generate a timestamp for the current run.
+
+    Returns:
+        The current local time formatted as ``YYYYMMDDHHMMSS``.
+
+    """
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     return timestamp
 
 
-## @brief Convert a string into a safe path component.
-## @param raw_value Raw string value.
-## @return Safe lowercase path component.
 def sanitize_path_component(raw_value: str) -> str:
+    """Convert a string into a safe, lowercase path component.
+
+    Args:
+        raw_value: Value to normalize for use in a file or directory name.
+
+    Returns:
+        A lowercase component containing only letters, digits, and underscores.
+        Empty normalized values become ``"default"``.
+
+    """
     safe_value = raw_value.strip().lower()
     safe_value = safe_value.replace(" ", "_")
     safe_value = safe_value.replace("-", "_")
@@ -53,10 +71,17 @@ def sanitize_path_component(raw_value: str) -> str:
     return safe_value
 
 
-## @brief Derive a readable configuration name from a config file path.
-## @param config_file Optional config file path.
-## @return Config name suitable for batch directory names.
 def get_config_name(config_file: str) -> str:
+    """Derive a batch-friendly name from a configuration file path.
+
+    Args:
+        config_file: Optional path to a JSON configuration file.
+
+    Returns:
+        The sanitized configuration stem, or ``"default"`` when no path is
+        supplied.
+
+    """
     if config_file:
         config_name = Path(config_file).stem
     else:
@@ -66,16 +91,22 @@ def get_config_name(config_file: str) -> str:
     return config_name
 
 
-## @brief Build a descriptive batch directory name.
-## @param run_timestamp Timestamp identifier.
-## @param study Study type.
-## @param config_file Optional config file path.
-## @return Descriptive batch directory name.
 def build_batch_name(
     run_timestamp: str,
     study: str,
     config_file: str,
 ) -> str:
+    """Build a descriptive directory name for an experiment batch.
+
+    Args:
+        run_timestamp: Timestamp shared by the experiment batch.
+        study: Study type, such as ``"standard"`` or ``"ablation"``.
+        config_file: Optional path to the batch's configuration file.
+
+    Returns:
+        A name containing the timestamp, study type, and configuration name.
+
+    """
     safe_study = sanitize_path_component(study)
     config_name = get_config_name(config_file)
 
@@ -83,9 +114,13 @@ def build_batch_name(
     return batch_name
 
 
-## @brief Return the canonical supervisor modes.
-## @return Ordered list of supervisor modes.
 def get_supervisor_modes() -> List[str]:
+    """Return supervisor modes in their canonical execution order.
+
+    Returns:
+        The undertrust, calibrated, and overtrust supervisor modes.
+
+    """
     supervisor_modes = [
         "undertrust",
         "calibrated",
@@ -94,10 +129,17 @@ def get_supervisor_modes() -> List[str]:
     return supervisor_modes
 
 
-## @brief Return the autonomy modes for the selected study type.
-## @param study_mode Study mode: "standard" or "ablation".
-## @return Ordered list of autonomy modes.
 def get_autonomy_modes(study_mode: str = "standard") -> List[str]:
+    """Return the autonomy modes required by a study.
+
+    Args:
+        study_mode: ``"ablation"`` for all component modes; any other value
+            selects the standard fixed-versus-adaptive comparison.
+
+    Returns:
+        Autonomy mode names in their canonical execution order.
+
+    """
     if study_mode == "ablation":
         autonomy_modes = [
             "fixed",
@@ -114,36 +156,39 @@ def get_autonomy_modes(study_mode: str = "standard") -> List[str]:
     return autonomy_modes
 
 
-## @brief Load FEMA calibration data once for reuse across all experiment calls.
-## @return Loaded FEMA calibration data.
 def load_shared_calibration_data():
+    """Load FEMA calibration data for reuse across experiment calls.
+
+    Returns:
+        Calibration distributions derived from the repository's FEMA dataset.
+
+    """
     csv_path = Path("data/raw/us_disaster_declarations.csv")
     calibration_data = load_fema_calibration_data(csv_path)
     return calibration_data
 
 
-## @brief Generate a results file path for a supervisor and autonomy mode.
-## @param directory_path Results directory.
-## @param supervisor_mode Supervisor mode name.
-## @param autonomy_mode Autonomy mode name.
-## @return Full path to results file.
 def generate_results_filepath(
     directory_path: str,
     supervisor_mode: str,
     autonomy_mode: str,
 ) -> str:
+    """Build the results path for one supervisor/autonomy condition.
+
+    Args:
+        directory_path: Directory that will contain the results file.
+        supervisor_mode: Supervisor policy mode name.
+        autonomy_mode: Autonomy mode name.
+
+    Returns:
+        The path to ``<supervisor_mode>_<autonomy_mode>.txt``.
+
+    """
     filename = f"{supervisor_mode}_{autonomy_mode}.txt"
     filepath = os.path.join(directory_path, filename)
     return filepath
 
 
-## @brief Run one single-seed experiment configuration and write results to file.
-## @param config Simulation configuration values.
-## @param calibration_data Preloaded FEMA calibration data.
-## @param num_episodes Number of episodes to run.
-## @param results_directory Output results directory.
-## @param supervisor_mode Supervisor mode name.
-## @param autonomy_mode Autonomy mode name.
 def run_and_log_experiment(
     config: SimulationConfig,
     calibration_data,
@@ -152,6 +197,17 @@ def run_and_log_experiment(
     supervisor_mode: str,
     autonomy_mode: str,
 ) -> None:
+    """Run one single-seed condition and write its report to disk.
+
+    Args:
+        config: Simulation parameters for the experiment.
+        calibration_data: Preloaded FEMA calibration distributions.
+        num_episodes: Number of episodes to simulate.
+        results_directory: Directory in which to create the text report.
+        supervisor_mode: Supervisor policy mode to simulate.
+        autonomy_mode: Autonomy mode to evaluate.
+
+    """
     results_filepath = generate_results_filepath(
         directory_path=results_directory,
         supervisor_mode=supervisor_mode,
@@ -178,10 +234,17 @@ def run_and_log_experiment(
     print(f"Results written to: {results_filepath}")
 
 
-## @brief Compute mean, standard deviation, and 95% CI for a numeric series.
-## @param series Numeric pandas series.
-## @return Dictionary with count, mean, std, sem, and ci95.
 def compute_mean_std_ci(series: pd.Series) -> Dict[str, float]:
+    """Calculate descriptive statistics for a numeric series.
+
+    Args:
+        series: Numeric observations to summarize.
+
+    Returns:
+        A dictionary containing the count, mean, sample standard deviation,
+        standard error, and normal-approximation 95% confidence interval.
+
+    """
     count = int(series.count())
     mean_value = float(series.mean())
 
@@ -204,16 +267,23 @@ def compute_mean_std_ci(series: pd.Series) -> Dict[str, float]:
     return statistics
 
 
-## @brief Convert one experiment summary into a seed-level CSV row.
-## @param run_timestamp Shared timestamp for the batch.
-## @param seed Seed used for the run.
-## @param summary Experiment summary object.
-## @return Dictionary representing one CSV row.
 def build_seed_level_row(
     run_timestamp: str,
     seed: int,
     summary: ExperimentRunSummary,
 ) -> Dict[str, float | int | str]:
+    """Convert an experiment summary into a seed-level results row.
+
+    Args:
+        run_timestamp: Timestamp shared by the experiment batch.
+        seed: Random seed used for the run.
+        summary: Summary metrics returned by the experiment runner.
+
+    Returns:
+        A dictionary containing raw counts, rates, utilities, and trust metrics
+        for one seed and condition.
+
+    """
     total_decisions = summary.ai_accepted + summary.ai_overridden
     accept_rate = summary.ai_accepted / total_decisions
     override_rate = summary.ai_overridden / total_decisions
@@ -258,10 +328,17 @@ def build_seed_level_row(
     return row
 
 
-## @brief Build a condition-level aggregate summary table across many seeds.
-## @param raw_dataframe Seed-level results dataframe.
-## @return Aggregate summary dataframe.
 def build_multi_seed_summary_table(raw_dataframe: pd.DataFrame) -> pd.DataFrame:
+    """Aggregate seed-level metrics by supervisor and autonomy condition.
+
+    Args:
+        raw_dataframe: Seed-level experiment results.
+
+    Returns:
+        One row per condition with seed counts, means, sample deviations, and
+        95% confidence intervals for the reported metrics.
+
+    """
     metrics_to_summarize = [
         "mean_executed_utility",
         "accept_rate",
@@ -300,10 +377,17 @@ def build_multi_seed_summary_table(raw_dataframe: pd.DataFrame) -> pd.DataFrame:
     return aggregate_dataframe
 
 
-## @brief Build paired adaptive-minus-fixed delta rows by seed and supervisor.
-## @param raw_dataframe Seed-level results dataframe.
-## @return Paired delta dataframe.
 def build_paired_delta_table(raw_dataframe: pd.DataFrame) -> pd.DataFrame:
+    """Compute adaptive-minus-fixed metric deltas for paired seeds.
+
+    Args:
+        raw_dataframe: Seed-level results containing fixed and adaptive rows.
+
+    Returns:
+        One row per seed and supervisor with paired deltas for utility,
+        acceptance, override, strength, and intervention metrics.
+
+    """
     pivot_df = raw_dataframe.pivot(
         index=["seed", "supervisor_mode"],
         columns="autonomy_mode",
@@ -359,10 +443,17 @@ def build_paired_delta_table(raw_dataframe: pd.DataFrame) -> pd.DataFrame:
     return delta_dataframe
 
 
-## @brief Build paired mode-minus-fixed delta rows for every non-fixed autonomy mode.
-## @param raw_dataframe Seed-level results dataframe.
-## @return Ablation delta dataframe.
 def build_ablation_delta_table(raw_dataframe: pd.DataFrame) -> pd.DataFrame:
+    """Compute paired mode-minus-fixed deltas for an ablation study.
+
+    Args:
+        raw_dataframe: Seed-level results for fixed and non-fixed autonomy modes.
+
+    Returns:
+        One row per seed, supervisor, and non-fixed comparison mode containing
+        paired metric differences from fixed autonomy.
+
+    """
     metrics_to_compare = [
         "mean_executed_utility",
         "accept_rate",
@@ -408,14 +499,23 @@ def build_ablation_delta_table(raw_dataframe: pd.DataFrame) -> pd.DataFrame:
     return ablation_delta_dataframe
 
 
-## @brief Load simulation configuration from a JSON file or use defaults.
-## @details
-## JSON config files may override any field defined in SimulationConfig. Fields
-## not defined in SimulationConfig are ignored, allowing experiment configs to
-## remain focused on simulation parameters.
-## @param config_path Optional path to JSON configuration file.
-## @return Resolved SimulationConfig object.
 def load_simulation_config(config_path: str) -> SimulationConfig:
+    """Load simulation settings from JSON or use the defaults.
+
+    JSON values override fields defined by :class:`SimulationConfig`. Unknown
+    fields are ignored so experiment files can contain unrelated metadata.
+
+    Args:
+        config_path: Optional path to a JSON configuration file.
+
+    Returns:
+        The resolved simulation configuration.
+
+    Raises:
+        FileNotFoundError: If ``config_path`` does not exist.
+        json.JSONDecodeError: If the configuration file is not valid JSON.
+
+    """
     if not config_path:
         config = SimulationConfig()
     else:
@@ -437,16 +537,6 @@ def load_simulation_config(config_path: str) -> SimulationConfig:
     return config
 
 
-## @brief Run the original single-seed batch.
-## @param config Simulation configuration values.
-## @param calibration_data Preloaded FEMA calibration data.
-## @param num_episodes Number of episodes to run.
-## @param results_directory Output results directory.
-## @param run_timestamp Shared timestamp for the full run.
-## @param autonomy_modes Autonomy modes to evaluate.
-## @param study Study type.
-## @param config_file Optional configuration file path.
-## @return Batch directory path.
 def run_single_batch(
     config: SimulationConfig,
     calibration_data,
@@ -457,6 +547,22 @@ def run_single_batch(
     study: str,
     config_file: str = "",
 ) -> str:
+    """Run every condition in a single-seed experiment batch.
+
+    Args:
+        config: Simulation parameters shared by the batch.
+        calibration_data: Preloaded FEMA calibration distributions.
+        num_episodes: Number of episodes to simulate per condition.
+        results_directory: Base directory for experiment results.
+        run_timestamp: Timestamp shared by the batch.
+        autonomy_modes: Autonomy modes to evaluate.
+        study: Study type represented by the batch.
+        config_file: Optional source configuration path for metadata and naming.
+
+    Returns:
+        The directory containing the condition reports and batch metadata.
+
+    """
     batch_name = build_batch_name(
         run_timestamp=run_timestamp,
         study=study,
@@ -498,18 +604,6 @@ def run_single_batch(
     return batch_directory
 
 
-## @brief Run a paired multi-seed batch and save aggregate CSV outputs.
-## @param config Base simulation configuration values.
-## @param calibration_data Preloaded FEMA calibration data.
-## @param num_episodes Number of episodes per seed-condition run.
-## @param results_directory Output results directory.
-## @param run_timestamp Shared timestamp for the full run.
-## @param num_seeds Number of seeds to evaluate.
-## @param seed_start First seed in the sequence.
-## @param autonomy_modes Autonomy modes to evaluate.
-## @param study Study type.
-## @param config_file Optional configuration file path.
-## @return Batch directory path.
 def run_multi_seed_batch(
     config: SimulationConfig,
     calibration_data,
@@ -522,6 +616,25 @@ def run_multi_seed_batch(
     study: str,
     config_file: str = "",
 ) -> str:
+    """Run paired conditions across seeds and save aggregate tables.
+
+    Args:
+        config: Base simulation parameters, copied with each evaluated seed.
+        calibration_data: Preloaded FEMA calibration distributions.
+        num_episodes: Number of episodes per seed and condition.
+        results_directory: Base directory for experiment results.
+        run_timestamp: Timestamp shared by the batch.
+        num_seeds: Number of sequential seeds to evaluate.
+        seed_start: First seed in the sequence.
+        autonomy_modes: Autonomy modes to evaluate.
+        study: Study type represented by the batch.
+        config_file: Optional source configuration path for metadata and naming.
+
+    Returns:
+        The directory containing seed-level, aggregate, delta, and metadata
+        outputs.
+
+    """
     batch_name = build_batch_name(
         run_timestamp=run_timestamp,
         study=study,
@@ -599,19 +712,6 @@ def run_multi_seed_batch(
     return batch_directory
 
 
-## @brief Build a metadata dictionary for one experiment batch.
-## @param config Simulation configuration values used for the batch.
-## @param run_timestamp Timestamp identifier for the batch.
-## @param batch_directory Directory where batch results are written.
-## @param mode Experiment execution mode.
-## @param study Study type.
-## @param num_episodes Number of episodes per experiment run.
-## @param supervisor_modes Supervisor modes included in the batch.
-## @param autonomy_modes Autonomy modes included in the batch.
-## @param num_seeds Number of seeds used, or None for single-seed runs.
-## @param seed_start First seed used, or None for single-seed runs.
-## @param config_file Optional configuration file path.
-## @return Metadata dictionary.
 def build_run_metadata(
     config: SimulationConfig,
     run_timestamp: str,
@@ -625,6 +725,26 @@ def build_run_metadata(
     seed_start: int | None = None,
     config_file: str = "",
 ) -> Dict[str, object]:
+    """Describe an experiment batch and the environment that produced it.
+
+    Args:
+        config: Simulation parameters used by the batch.
+        run_timestamp: Timestamp identifier for the batch.
+        batch_directory: Directory where batch results are written.
+        mode: Experiment execution mode.
+        study: Study type represented by the batch.
+        num_episodes: Number of episodes per condition.
+        supervisor_modes: Supervisor modes included in the batch.
+        autonomy_modes: Autonomy modes included in the batch.
+        num_seeds: Number of evaluated seeds, or ``None`` for a single-seed run.
+        seed_start: First evaluated seed, or ``None`` for a single-seed run.
+        config_file: Optional source configuration path.
+
+    Returns:
+        Serializable batch, configuration, command, Python, and platform
+        metadata.
+
+    """
     metadata: Dict[str, object] = {
         "run_timestamp": run_timestamp,
         "generated_at": datetime.now().isoformat(),
@@ -647,13 +767,17 @@ def build_run_metadata(
     return metadata
 
 
-## @brief Write run metadata to metadata.json.
-## @param batch_directory Directory where metadata should be written.
-## @param metadata Metadata dictionary.
 def write_run_metadata(
     batch_directory: str,
     metadata: Dict[str, object],
 ) -> None:
+    """Write an experiment batch's metadata to ``metadata.json``.
+
+    Args:
+        batch_directory: Directory in which to create the metadata file.
+        metadata: Serializable metadata describing the experiment batch.
+
+    """
     metadata_path = os.path.join(batch_directory, "metadata.json")
 
     with open(metadata_path, "w") as metadata_file:
@@ -662,10 +786,17 @@ def write_run_metadata(
     print(f"Metadata written to: {metadata_path}")
 
 
-## @brief Run the appropriate visualization script for a completed batch.
-## @param mode Experiment mode.
-## @param batch_directory Completed batch directory.
 def run_visualization_script(mode: str, batch_directory: str) -> None:
+    """Generate figures for a completed experiment batch.
+
+    Args:
+        mode: Experiment mode used to select the visualization script.
+        batch_directory: Directory containing the completed batch outputs.
+
+    Raises:
+        subprocess.CalledProcessError: If the visualization process fails.
+
+    """
     if mode == "single-seed":
         script_path = "analysis/generate_results_visuals.py"
     else:
@@ -682,9 +813,13 @@ def run_visualization_script(mode: str, batch_directory: str) -> None:
     )
 
 
-## @brief Parse command-line arguments.
-## @return Parsed argument namespace.
 def parse_arguments() -> argparse.Namespace:
+    """Parse command-line options for an experiment run.
+
+    Returns:
+        The validated command-line argument namespace.
+
+    """
     parser = argparse.ArgumentParser(
         description="Run single-seed or multi-seed HMT experiments.",
     )
@@ -740,8 +875,8 @@ def parse_arguments() -> argparse.Namespace:
     return arguments
 
 
-## @brief Program entry point.
 def main() -> None:
+    """Run the requested experiment batch and optional visualization step."""
     arguments = parse_arguments()
     # config = SimulationConfig()
     config = load_simulation_config(arguments.config_file)
@@ -784,4 +919,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-    

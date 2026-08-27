@@ -121,4 +121,3 @@ class PlanEvaluation:
 
     #: Incident identifiers that were attempted but failed.
     failed_incident_ids: List[str]
-    
