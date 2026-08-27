@@ -6,6 +6,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_every_source_module_has_a_matching_test_module() -> None:
+    """Require each source module to have a test at the mirrored path."""
     missing_test_modules = []
 
     for source_path in sorted((PROJECT_ROOT / "src").rglob("*.py")):

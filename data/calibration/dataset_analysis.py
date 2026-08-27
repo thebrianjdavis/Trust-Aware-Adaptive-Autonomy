@@ -1,3 +1,5 @@
+"""Inspect FEMA disaster records and print calibration-oriented summaries."""
+
 import pandas as pd
 
 df = pd.read_csv("data/raw/us_disaster_declarations.csv")

@@ -21,6 +21,7 @@ from src.autonomy.adaptive_autonomy import (
     [(-0.1, 0.0), (0.4, 0.4), (1.1, 1.0)],
 )
 def test_clamp_score(value: float, expected: float) -> None:
+    """Verify that intervention scores stay within the unit interval."""
     assert clamp_score(value) == expected
 
 
@@ -29,10 +30,12 @@ def test_clamp_score(value: float, expected: float) -> None:
     [(-2.0, -1.0), (-0.4, -0.4), (2.0, 1.0)],
 )
 def test_clamp_behavior_signal(value: float, expected: float) -> None:
+    """Verify that behavior signals stay within their symmetric bounds."""
     assert clamp_behavior_signal(value) == expected
 
 
 def test_override_rate_uses_prior_counts() -> None:
+    """Verify that override rate includes the configured prior observations."""
     config = AdaptiveAutonomyConfig()
 
     assert compute_override_rate(0, 0, config) == 0.5
@@ -47,12 +50,14 @@ def test_override_behavior_signal_is_centered_and_clamped(
     override_rate: float,
     expected: float,
 ) -> None:
+    """Verify that the override signal is centered on its target and clamped."""
     config = AdaptiveAutonomyConfig()
 
     assert compute_override_behavior_signal(override_rate, config) == expected
 
 
 def test_override_behavior_signal_handles_asymmetric_target() -> None:
+    """Verify signal scaling on either side of an asymmetric target."""
     config = AdaptiveAutonomyConfig(target_override_rate=0.25)
 
     assert compute_override_behavior_signal(1.0, config) == 1.0
@@ -60,6 +65,7 @@ def test_override_behavior_signal_handles_asymmetric_target() -> None:
 
 
 def test_intervention_score_combines_inputs_and_clamps() -> None:
+    """Verify weighted confidence, trust, and behavior score composition."""
     config = AdaptiveAutonomyConfig()
 
     assert compute_intervention_score(0.8, 0.5, 0.75, config) == pytest.approx(0.65)
@@ -83,6 +89,7 @@ def test_intervention_score_combines_inputs_and_clamps() -> None:
     ],
 )
 def test_intervention_score_modes(mode: str, expected: float) -> None:
+    """Verify that each intervention mode enables the intended signals."""
     config = AdaptiveAutonomyConfig()
 
     score = compute_intervention_score_for_mode(
@@ -97,6 +104,7 @@ def test_intervention_score_modes(mode: str, expected: float) -> None:
 
 
 def test_intervention_score_mode_clamps_result() -> None:
+    """Verify that mode-specific intervention scores are clamped."""
     config = AdaptiveAutonomyConfig(confidence_weight=5.0, trust_weight=5.0)
 
     assert (
@@ -106,6 +114,7 @@ def test_intervention_score_mode_clamps_result() -> None:
 
 
 def test_unsupported_intervention_mode_raises() -> None:
+    """Verify that an unknown intervention mode is rejected."""
     with pytest.raises(ValueError, match="Unsupported autonomy mode: unknown"):
         compute_intervention_score_for_mode(
             0.5,
@@ -117,6 +126,7 @@ def test_unsupported_intervention_mode_raises() -> None:
 
 
 def test_normalize_autonomy_mode() -> None:
+    """Verify normalization and aliases for supported autonomy modes."""
     assert normalize_autonomy_mode("adaptive_full") == "adaptive"
     assert normalize_autonomy_mode("fixed") == "fixed"
 
@@ -133,8 +143,10 @@ def test_normalize_autonomy_mode() -> None:
     ],
 )
 def test_recommendation_strength_boundaries(score: float, expected: str) -> None:
+    """Verify recommendation labels at every intervention-score boundary."""
     assert get_recommendation_strength(score, AdaptiveAutonomyConfig()) == expected
 
 
 def test_fixed_recommendation_is_normal() -> None:
+    """Verify that fixed autonomy always emits normal-strength recommendations."""
     assert get_fixed_recommendation_strength() == "normal"

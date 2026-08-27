@@ -10,6 +10,7 @@ def test_build_asset_occupancy_map(
     medical_asset: Asset,
     logistics_asset: Asset,
 ) -> None:
+    """Verify that every asset receives an independent occupancy set."""
     occupancy = ai_planner.build_asset_occupancy_map(
         [medical_asset, logistics_asset]
     )
@@ -19,6 +20,7 @@ def test_build_asset_occupancy_map(
 
 
 def test_get_candidate_start_times(medical_incident: Incident) -> None:
+    """Verify candidate starts span the incident's feasible window."""
     assert ai_planner.get_candidate_start_times(medical_incident) == [1, 2, 3, 4]
 
 
@@ -26,6 +28,7 @@ def test_assignment_is_feasible(
     medical_incident: Incident,
     medical_asset: Asset,
 ) -> None:
+    """Verify acceptance of a compatible assignment with open time slots."""
     assert ai_planner.is_assignment_feasible(
         medical_incident,
         medical_asset,
@@ -38,6 +41,7 @@ def test_assignment_rejects_incompatible_asset(
     medical_incident: Incident,
     logistics_asset: Asset,
 ) -> None:
+    """Verify rejection of an asset without the required capability."""
     assert not ai_planner.is_assignment_feasible(
         medical_incident,
         logistics_asset,
@@ -47,6 +51,7 @@ def test_assignment_rejects_incompatible_asset(
 
 
 def test_assignment_rejects_unavailable_slots(medical_incident: Incident) -> None:
+    """Verify rejection when the asset is unavailable during the assignment."""
     asset = Asset("A1", {"medical"}, {1})
 
     assert not ai_planner.is_assignment_feasible(
@@ -61,6 +66,7 @@ def test_assignment_rejects_occupied_slots(
     medical_incident: Incident,
     medical_asset: Asset,
 ) -> None:
+    """Verify rejection when the assignment overlaps occupied slots."""
     assert not ai_planner.is_assignment_feasible(
         medical_incident,
         medical_asset,
@@ -70,6 +76,7 @@ def test_assignment_rejects_occupied_slots(
 
 
 def test_compute_incident_score(medical_incident: Incident) -> None:
+    """Verify the priority, probability, and duration scoring formula."""
     assert ai_planner.compute_incident_score(medical_incident) == pytest.approx(4.2)
 
 
@@ -79,6 +86,7 @@ def test_count_compatible_assets(
     logistics_asset: Asset,
     flexible_asset: Asset,
 ) -> None:
+    """Verify counting assets that satisfy an incident's capability."""
     assert (
         ai_planner.count_compatible_assets(
             medical_incident,
@@ -92,6 +100,7 @@ def test_compute_assignment_rank_prefers_less_flexible_assets(
     medical_asset: Asset,
     flexible_asset: Asset,
 ) -> None:
+    """Verify ranking favors specialist assets before flexible ones."""
     occupancy = {"A1": {0, 1}, "A3": set()}
 
     specialist_rank = ai_planner.compute_assignment_rank(medical_asset, 2, occupancy)
@@ -107,6 +116,7 @@ def test_find_best_assignment_uses_rank_not_asset_order(
     medical_asset: Asset,
     flexible_asset: Asset,
 ) -> None:
+    """Verify best-assignment selection uses rank instead of input order."""
     occupancy = {"A1": {1}, "A3": set()}
 
     assignment = ai_planner.find_best_feasible_assignment(
@@ -122,6 +132,7 @@ def test_find_best_assignment_returns_none_when_infeasible(
     medical_incident: Incident,
     logistics_asset: Asset,
 ) -> None:
+    """Verify that assignment search returns ``None`` when no option works."""
     assert (
         ai_planner.find_best_feasible_assignment(
             medical_incident,
@@ -136,6 +147,7 @@ def test_plan_orders_by_score_and_skips_infeasible_incidents(
     medical_asset: Asset,
     flexible_asset: Asset,
 ) -> None:
+    """Verify score ordering and omission of infeasible incidents."""
     high_density = Incident("high", 10, 1, 0, 1, 1.0, "medical")
     lower_density = Incident("lower", 12, 2, 0, 2, 0.5, "medical")
     impossible = Incident("impossible", 100, 1, 0, 1, 1.0, "unknown")

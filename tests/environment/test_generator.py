@@ -12,6 +12,7 @@ from src.environment import generator
 
 @pytest.fixture
 def calibration_data() -> FemaCalibrationData:
+    """Provide a compact calibration distribution for generator tests."""
     return FemaCalibrationData(
         incident_types=["Fire", "Flood"],
         incident_type_weights=[0.5, 0.5],
@@ -27,6 +28,7 @@ def test_generate_assets_respects_available_predefined_assets(
     num_assets: int,
     expected_ids: list[str],
 ) -> None:
+    """Verify that asset generation honors the predefined asset limit."""
     config = SimulationConfig(num_assets=num_assets, num_time_slots=4)
 
     assets = generator.generate_assets(config)
@@ -39,6 +41,7 @@ def test_generate_incidents_maps_types_and_clamps_durations(
     monkeypatch: pytest.MonkeyPatch,
     calibration_data: FemaCalibrationData,
 ) -> None:
+    """Verify incident type mapping and configured duration clamping."""
     config = SimulationConfig(
         num_incidents=2,
         num_time_slots=10,
@@ -80,6 +83,7 @@ def test_generate_incidents_maps_types_and_clamps_durations(
 def test_generate_episode_is_reproducible_with_default_seed(
     calibration_data: FemaCalibrationData,
 ) -> None:
+    """Verify repeatable episode generation from the configured seed."""
     config = SimulationConfig(num_incidents=3, seed=123)
 
     first = generator.generate_episode(config, calibration_data)
@@ -92,6 +96,7 @@ def test_generate_episode_uses_supplied_rng(
     monkeypatch: pytest.MonkeyPatch,
     calibration_data: FemaCalibrationData,
 ) -> None:
+    """Verify that a caller-provided random generator is reused."""
     config = SimulationConfig()
     supplied_rng = random.Random(999)
     generated_assets = []

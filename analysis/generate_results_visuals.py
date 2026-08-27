@@ -1,3 +1,5 @@
+"""Generate polished figures and tables from single-seed experiment results."""
+
 ## @file generate_results_visuals.py
 ## @brief Generate polished figures and summary tables from experiment result files.
 
@@ -61,6 +63,8 @@ SUPERVISOR_COLORS: Dict[str, str] = {
 ## @brief Stores parsed summary information for one experiment run.
 @dataclass
 class ExperimentSummary:
+    """Store parsed summary metrics for one experiment condition."""
+
     ## @brief Supervisor policy mode.
     supervisor_mode: str
 
@@ -117,21 +121,26 @@ class ExperimentSummary:
 ## @param filepath Path to the results text file.
 ## @return Parsed experiment summary.
 def parse_results_file(filepath: Path) -> ExperimentSummary:
+    """Parse a text results file into a structured experiment summary."""
     text = filepath.read_text()
 
     def extract_string(label: str) -> str:
+        """Extract a labeled string value from the results text."""
         match = re.search(rf"{re.escape(label)}:\s*(.+)", text)
         if match is None:
             raise ValueError(f"Could not find label '{label}' in {filepath}")
         return match.group(1).strip()
 
     def extract_int(label: str) -> int:
+        """Extract a labeled integer value from the results text."""
         return int(extract_string(label))
 
     def extract_float(label: str) -> float:
+        """Extract a labeled floating-point value from the results text."""
         return float(extract_string(label))
 
     def extract_list(label: str) -> List[float]:
+        """Extract a labeled list of floating-point values from the results text."""
         raw_value = extract_string(label)
         parsed_value = ast.literal_eval(raw_value)
         return [float(item) for item in parsed_value]
@@ -161,6 +170,7 @@ def parse_results_file(filepath: Path) -> ExperimentSummary:
 ## @param summaries Parsed experiment summaries.
 ## @return Dataframe of summary values.
 def build_summary_dataframe(summaries: List[ExperimentSummary]) -> pd.DataFrame:
+    """Convert parsed experiment summaries into a tabular dataset."""
     rows: List[Dict[str, object]] = []
 
     for summary in summaries:
@@ -193,6 +203,7 @@ def build_summary_dataframe(summaries: List[ExperimentSummary]) -> pd.DataFrame:
 ## @param dataframe Raw summary dataframe.
 ## @return Dataframe with added derived columns.
 def add_rate_columns(dataframe: pd.DataFrame) -> pd.DataFrame:
+    """Add acceptance, override, and recommendation proportion columns."""
     enriched_df = dataframe.copy()
 
     total_decisions = enriched_df["ai_accepted"] + enriched_df["ai_overridden"]
@@ -215,6 +226,7 @@ def add_rate_columns(dataframe: pd.DataFrame) -> pd.DataFrame:
 ## @param dataframe Summary dataframe with rate columns.
 ## @return Compact summary dataframe for reporting and slides.
 def build_presentation_summary_table(dataframe: pd.DataFrame) -> pd.DataFrame:
+    """Build a compact fixed-versus-adaptive presentation table."""
     utility_pivot_df = (
         dataframe.pivot(
             index="supervisor_mode",
@@ -269,6 +281,7 @@ def build_presentation_summary_table(dataframe: pd.DataFrame) -> pd.DataFrame:
 ## @param dataframe Dataframe to save.
 ## @param output_path Output CSV path.
 def save_table(dataframe: pd.DataFrame, output_path: Path) -> None:
+    """Write a dataframe to a header-bearing CSV file."""
     dataframe.to_csv(output_path, index=False)
 
 
@@ -276,6 +289,7 @@ def save_table(dataframe: pd.DataFrame, output_path: Path) -> None:
 ## @param dataframe Summary dataframe with rate columns.
 ## @return Tuple of y-axis minimum and maximum.
 def get_utility_axis_limits(dataframe: pd.DataFrame) -> tuple[float, float]:
+    """Choose readable utility-axis limits without exaggerating small changes."""
     utility_min = float(dataframe["mean_executed_utility"].min())
     utility_max = float(dataframe["mean_executed_utility"].max())
 
@@ -295,6 +309,7 @@ def plot_acceptance_rate_comparison(
     dataframe: pd.DataFrame,
     output_path: Path,
 ) -> None:
+    """Plot acceptance and override proportions as stacked bars."""
     plot_df = dataframe.copy()
     plot_df["condition_label"] = pd.Categorical(
         plot_df["condition_label"],
@@ -326,6 +341,7 @@ def plot_recommendation_strength_distribution(
     dataframe: pd.DataFrame,
     output_path: Path,
 ) -> None:
+    """Plot recommendation-strength proportions for adaptive conditions."""
     adaptive_df = dataframe[dataframe["autonomy_mode"] == "adaptive"].copy()
     adaptive_df["supervisor_mode"] = pd.Categorical(
         adaptive_df["supervisor_mode"],
@@ -361,6 +377,7 @@ def plot_acceptance_utility_trajectory(
     dataframe: pd.DataFrame,
     output_path: Path,
 ) -> None:
+    """Plot fixed-to-adaptive trajectories in acceptance-utility space."""
     y_min, y_max = get_utility_axis_limits(dataframe)
     x_min = max(0.0, float(dataframe["accept_rate"].min()) - 0.05)
     x_max = min(1.0, float(dataframe["accept_rate"].max()) + 0.05)
@@ -470,6 +487,7 @@ def plot_slopegraph_table_combo(
     presentation_table: pd.DataFrame,
     output_path: Path,
 ) -> None:
+    """Create a presentation figure combining a utility slopegraph and table."""
     utility_values = list(presentation_table["fixed_utility"]) + list(
         presentation_table["adaptive_utility"]
     )
@@ -621,6 +639,7 @@ def plot_slopegraph_table_combo(
 ## @param results_dir Path to the single_seed results directory.
 ## @return Tuple containing the latest batch directory and its six result files.
 def find_latest_complete_batch(results_dir: Path) -> tuple[Path, List[Path]]:
+    """Return the latest batch containing all six condition result files."""
     batch_directories = sorted(
         batch_path for batch_path in results_dir.iterdir() if batch_path.is_dir()
     )
@@ -647,6 +666,7 @@ def find_latest_complete_batch(results_dir: Path) -> tuple[Path, List[Path]]:
 ## @param figures_dir Figures output directory.
 ## @param tables_dir Tables output directory.
 def ensure_output_directories(figures_dir: Path, tables_dir: Path) -> None:
+    """Create the figure and table output directories when needed."""
     figures_dir.mkdir(parents=True, exist_ok=True)
     tables_dir.mkdir(parents=True, exist_ok=True)
 
@@ -654,6 +674,7 @@ def ensure_output_directories(figures_dir: Path, tables_dir: Path) -> None:
 ## @brief Parse command-line arguments.
 ## @return Parsed argument namespace.
 def parse_arguments() -> argparse.Namespace:
+    """Parse command-line options for single-seed visualization generation."""
     parser = argparse.ArgumentParser(
         description="Generate single-seed result figures.",
     )
@@ -670,6 +691,7 @@ def parse_arguments() -> argparse.Namespace:
 
 ## @brief Program entry point.
 def main() -> None:
+    """Load one complete single-seed batch and generate its report artifacts."""
     arguments = parse_arguments()
     results_dir = Path("results/single_seed")
 
@@ -733,4 +755,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-    

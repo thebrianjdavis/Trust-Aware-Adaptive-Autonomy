@@ -13,6 +13,7 @@ from src.environment.models import Asset, Episode, Incident, Plan, PlanAssignmen
 
 
 def test_lookup_builders_index_episode_objects(sample_episode: Episode) -> None:
+    """Verify that episode incidents and assets are indexed by identifier."""
     incident_lookup = build_incident_lookup(sample_episode)
     asset_lookup = build_asset_lookup(sample_episode)
 
@@ -27,6 +28,7 @@ def test_lookup_builders_index_episode_objects(sample_episode: Episode) -> None:
     [(-0.1, 0.0), (0.6, 0.6), (1.1, 1.0)],
 )
 def test_clamp_confidence(value: float, expected: float) -> None:
+    """Verify that estimated confidence stays within the unit interval."""
     assert clamp_confidence(value) == expected
 
 
@@ -35,6 +37,7 @@ def test_medical_specialist_receives_bonus(
     medical_asset: Asset,
     medical_assignment: PlanAssignment,
 ) -> None:
+    """Verify the confidence bonus for a medical specialist assignment."""
     assert compute_assignment_confidence(
         medical_incident,
         medical_asset,
@@ -43,6 +46,7 @@ def test_medical_specialist_receives_bonus(
 
 
 def test_logistics_specialist_receives_bonus() -> None:
+    """Verify the confidence bonus for a logistics specialist assignment."""
     incident = Incident("I2", 10, 1, 0, 3, 0.6, "logistics")
     asset = Asset("A2", {"logistics"}, {0, 1, 2})
     assignment = PlanAssignment("I2", "A2", 0, 1)
@@ -56,6 +60,7 @@ def test_flexible_asset_gets_no_bonus_and_late_start_penalty(
     medical_incident: Incident,
     flexible_asset: Asset,
 ) -> None:
+    """Verify flexible assets receive no bonus and delayed starts are penalized."""
     assignment = PlanAssignment("I1", "A3", 4, 6)
 
     assert compute_assignment_confidence(
@@ -66,6 +71,7 @@ def test_flexible_asset_gets_no_bonus_and_late_start_penalty(
 
 
 def test_zero_slack_skips_delay_penalty() -> None:
+    """Verify that zero-slack incidents do not incur a delay penalty."""
     incident = Incident("I1", 10, 2, 1, 3, 0.4, "other")
     asset = Asset("X", {"other"}, {1, 2})
     assignment = PlanAssignment("I1", "X", 1, 3)
@@ -74,6 +80,7 @@ def test_zero_slack_skips_delay_penalty() -> None:
 
 
 def test_assignment_confidence_is_clamped() -> None:
+    """Verify that extreme assignment estimates are clamped."""
     high_incident = Incident("high", 10, 1, 0, 1, 0.99, "medical")
     high_asset = Asset("A1", {"medical"}, {0})
     high_assignment = PlanAssignment("high", "A1", 0, 1)
@@ -90,10 +97,12 @@ def test_assignment_confidence_is_clamped() -> None:
 
 
 def test_empty_plan_has_zero_confidence(sample_episode: Episode) -> None:
+    """Verify that a plan without assignments has zero confidence."""
     assert estimate_plan_confidence(sample_episode, Plan("empty")) == 0.0
 
 
 def test_plan_confidence_is_assignment_mean(sample_episode: Episode) -> None:
+    """Verify that plan confidence is the mean of assignment confidences."""
     plan = Plan(
         "ai",
         [

@@ -1,3 +1,5 @@
+"""Generate aggregate Monte Carlo figures from multi-seed CSV results."""
+
 ## @file generate_aggregate_visuals.py
 ## @brief Generate aggregate Monte Carlo figures from multi-seed CSV results.
 
@@ -40,6 +42,7 @@ SUPERVISOR_COLORS: Dict[str, str] = {
 ## @param figures_dir Figures output directory.
 ## @param tables_dir Tables output directory.
 def ensure_output_directories(figures_dir: Path, tables_dir: Path) -> None:
+    """Create the figure and table output directories when needed."""
     figures_dir.mkdir(parents=True, exist_ok=True)
     tables_dir.mkdir(parents=True, exist_ok=True)
 
@@ -48,6 +51,7 @@ def ensure_output_directories(figures_dir: Path, tables_dir: Path) -> None:
 ## @param results_dir Base results directory.
 ## @return Path to latest multi-seed batch directory.
 def find_latest_multi_seed_batch(results_dir: Path) -> Path:
+    """Return the most recent multi-seed batch directory."""
     multi_seed_root = results_dir / "multi_seed"
 
     if not multi_seed_root.exists():
@@ -68,6 +72,7 @@ def find_latest_multi_seed_batch(results_dir: Path) -> Path:
 ## @param series Numeric pandas series.
 ## @return Tuple of mean, standard deviation, and 95% CI.
 def compute_mean_std_ci(series: pd.Series) -> Tuple[float, float, float]:
+    """Calculate a series' mean, sample deviation, and 95% confidence interval."""
     count = int(series.count())
     mean_value = float(series.mean())
 
@@ -86,6 +91,7 @@ def compute_mean_std_ci(series: pd.Series) -> Tuple[float, float, float]:
 ## @param delta_dataframe Paired adaptive-minus-fixed delta dataframe.
 ## @return Aggregate paired-delta summary dataframe.
 def build_paired_delta_summary_table(delta_dataframe: pd.DataFrame) -> pd.DataFrame:
+    """Aggregate paired adaptive-minus-fixed deltas for presentation."""
     rows: List[Dict[str, float | str]] = []
 
     for supervisor_mode in SUPERVISOR_ORDER:
@@ -123,6 +129,7 @@ def plot_utility_delta_with_ci(
     delta_dataframe: pd.DataFrame,
     output_path: Path,
 ) -> None:
+    """Plot adaptive-minus-fixed utility means with 95% confidence intervals."""
     x_labels: List[str] = []
     mean_values: List[float] = []
     ci_values: List[float] = []
@@ -160,6 +167,7 @@ def plot_acceptance_delta_with_ci(
     delta_dataframe: pd.DataFrame,
     output_path: Path,
 ) -> None:
+    """Plot acceptance-rate deltas with 95% confidence intervals."""
     x_labels: List[str] = []
     mean_values: List[float] = []
     ci_values: List[float] = []
@@ -197,6 +205,7 @@ def plot_aggregate_recommendation_strength_distribution(
     raw_dataframe: pd.DataFrame,
     output_path: Path,
 ) -> None:
+    """Plot mean recommendation-strength proportions for adaptive runs."""
     adaptive_df = raw_dataframe[raw_dataframe["autonomy_mode"] == "adaptive"].copy()
     adaptive_df["supervisor_mode"] = pd.Categorical(
         adaptive_df["supervisor_mode"],
@@ -240,6 +249,7 @@ def plot_aggregate_acceptance_utility_trajectory(
     raw_dataframe: pd.DataFrame,
     output_path: Path,
 ) -> None:
+    """Plot aggregate fixed-to-adaptive acceptance and utility trajectories."""
     ## Show the full acceptance range for interpretability.
     x_min = 0.0
     x_max = 1.0
@@ -414,6 +424,7 @@ def plot_aggregate_acceptance_utility_trajectory(
 def build_ablation_delta_summary_table(
     ablation_delta_dataframe: pd.DataFrame,
 ) -> pd.DataFrame:
+    """Aggregate ablation deltas by supervisor and comparison mode."""
     metric_columns = [
         "mean_executed_utility_delta",
         "accept_rate_delta",
@@ -476,6 +487,7 @@ def plot_ablation_delta_grouped_bars(
     y_label: str,
     output_path: Path,
 ) -> None:
+    """Plot an ablation metric by supervisor and comparison mode."""
     comparison_modes = [
         "confidence_trust",
         "behavior_only",
@@ -538,6 +550,7 @@ def plot_ablation_delta_grouped_bars(
 ## @brief Parse command-line arguments.
 ## @return Parsed argument namespace.
 def parse_arguments() -> argparse.Namespace:
+    """Parse command-line options for aggregate visualization generation."""
     parser = argparse.ArgumentParser(
         description="Generate aggregate Monte Carlo figures.",
     )
@@ -554,6 +567,7 @@ def parse_arguments() -> argparse.Namespace:
 
 ## @brief Program entry point.
 def main() -> None:
+    """Load one multi-seed batch and generate its tables and figures."""
     arguments = parse_arguments()
     results_dir = Path("results")
 

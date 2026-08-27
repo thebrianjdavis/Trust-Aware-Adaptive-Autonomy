@@ -19,6 +19,7 @@ from src.supervisor.supervisor_policies import (
     [(-0.5, 0.0), (0.5, 0.5), (1.5, 1.0)],
 )
 def test_clamp_probability(value: float, expected: float) -> None:
+    """Verify that supervisor probabilities stay within the unit interval."""
     assert clamp_probability(value) == expected
 
 
@@ -27,10 +28,12 @@ def test_clamp_probability(value: float, expected: float) -> None:
     [("weak", -0.3), ("normal", 0.0), ("strong", 0.2), ("unknown", 0.0)],
 )
 def test_strength_modifier(strength: str, expected: float) -> None:
+    """Verify probability adjustments for every recommendation strength."""
     assert get_strength_modifier(strength) == expected
 
 
 def test_base_policy_requires_implementation() -> None:
+    """Verify that the base supervisor policy cannot make decisions directly."""
     policy = SupervisorPolicy(policy_name="base")
 
     with pytest.raises(NotImplementedError, match="Subclasses must implement"):
@@ -46,6 +49,7 @@ def test_base_policy_requires_implementation() -> None:
     ],
 )
 def test_policy_names(policy: SupervisorPolicy, expected_name: str) -> None:
+    """Verify each concrete policy exposes its canonical name."""
     assert policy.policy_name == expected_name
 
 
@@ -57,6 +61,7 @@ def test_undertrust_probability_bands(
     confidence: float,
     expected_probability: float,
 ) -> None:
+    """Verify undertrust acceptance probabilities across confidence bands."""
     rng = Mock()
     rng.random.return_value = expected_probability + 0.001
 
@@ -79,6 +84,7 @@ def test_calibrated_probability_bands(
     confidence: float,
     expected_probability: float,
 ) -> None:
+    """Verify calibrated acceptance probabilities across confidence bands."""
     rng = Mock()
     rng.random.return_value = expected_probability - 0.001
 
@@ -98,6 +104,7 @@ def test_overtrust_probability_bands(
     confidence: float,
     expected_probability: float,
 ) -> None:
+    """Verify overtrust acceptance probabilities across confidence bands."""
     rng = Mock()
     rng.random.return_value = expected_probability + 0.001
 
@@ -110,6 +117,7 @@ def test_overtrust_probability_bands(
 
 
 def test_strength_modifiers_are_applied_and_clamped() -> None:
+    """Verify recommendation strength changes and clamps acceptance probability."""
     reject_rng = Mock()
     reject_rng.random.return_value = 0.0
     assert not UndertrustSupervisorPolicy().accept_ai_plan(

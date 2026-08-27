@@ -9,6 +9,7 @@ from src.simulation import outcome_simulator
 
 
 def test_lookup_builders_index_episode_objects(sample_episode: Episode) -> None:
+    """Verify that episode incidents and assets are indexed by identifier."""
     assert outcome_simulator.build_incident_lookup(sample_episode) == {
         incident.incident_id: incident for incident in sample_episode.incidents
     }
@@ -22,6 +23,7 @@ def test_lookup_builders_index_episode_objects(sample_episode: Episode) -> None:
     [(-1.0, 0.0), (0.4, 0.4), (2.0, 1.0)],
 )
 def test_clamp_probability(value: float, expected: float) -> None:
+    """Verify that probabilities stay within the unit interval."""
     assert outcome_simulator.clamp_probability(value) == expected
 
 
@@ -30,6 +32,7 @@ def test_medical_specialist_probability_bonus(
     medical_asset: Asset,
     medical_assignment: PlanAssignment,
 ) -> None:
+    """Verify the success-probability bonus for a medical specialist."""
     assert outcome_simulator.compute_adjusted_success_probability(
         medical_incident,
         medical_asset,
@@ -38,6 +41,7 @@ def test_medical_specialist_probability_bonus(
 
 
 def test_logistics_specialist_probability_bonus() -> None:
+    """Verify the success-probability bonus for a logistics specialist."""
     incident = Incident("I2", 10, 1, 0, 3, 0.6, "logistics")
     asset = Asset("A2", {"logistics"}, {0, 1, 2})
     assignment = PlanAssignment("I2", "A2", 0, 1)
@@ -53,6 +57,7 @@ def test_flexible_asset_has_no_bonus_and_late_penalty(
     medical_incident: Incident,
     flexible_asset: Asset,
 ) -> None:
+    """Verify flexible assets receive no bonus and delayed starts are penalized."""
     assignment = PlanAssignment("I1", "A3", 4, 6)
 
     assert outcome_simulator.compute_adjusted_success_probability(
@@ -63,6 +68,7 @@ def test_flexible_asset_has_no_bonus_and_late_penalty(
 
 
 def test_zero_slack_skips_probability_penalty() -> None:
+    """Verify that zero-slack incidents do not incur a delay penalty."""
     incident = Incident("I1", 10, 2, 1, 3, 0.4, "other")
     asset = Asset("X", {"other"}, {1, 2})
     assignment = PlanAssignment("I1", "X", 1, 3)
@@ -75,6 +81,7 @@ def test_zero_slack_skips_probability_penalty() -> None:
 
 
 def test_adjusted_probability_is_clamped() -> None:
+    """Verify that extreme adjusted success probabilities are clamped."""
     high_incident = Incident("high", 10, 1, 0, 1, 0.99, "medical")
     high_asset = Asset("A1", {"medical"}, {0})
     high_assignment = PlanAssignment("high", "A1", 0, 1)
@@ -95,6 +102,7 @@ def test_adjusted_probability_is_clamped() -> None:
 
 
 def test_evaluate_plan_records_successes_failures_and_utility() -> None:
+    """Verify plan evaluation records outcomes and earned utility."""
     successful = Incident("success", 15, 1, 0, 1, 1.0, "medical")
     failed = Incident("failure", 20, 1, 0, 1, 0.0, "logistics")
     assets = [
@@ -119,6 +127,7 @@ def test_evaluate_plan_records_successes_failures_and_utility() -> None:
 
 
 def test_evaluate_plan_is_reproducible(sample_episode: Episode) -> None:
+    """Verify deterministic plan outcomes for a repeated seed."""
     plan = Plan(
         "ai",
         [
@@ -138,6 +147,7 @@ def test_shared_outcome_evaluation_derives_distinct_seeds(
     monkeypatch: pytest.MonkeyPatch,
     sample_episode: Episode,
 ) -> None:
+    """Verify paired plan evaluation derives separate deterministic seeds."""
     baseline_plan = Plan("baseline")
     ai_plan = Plan("ai")
     baseline_result = Mock()

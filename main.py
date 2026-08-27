@@ -1,3 +1,5 @@
+"""Run single-seed, multi-seed, ablation, and sensitivity experiments."""
+
 ## @file main.py
 ## @brief Entry point for single-seed, multi-seed, ablation, and sensitivity experiments.
 
@@ -24,12 +26,14 @@ from src.simulation.experiment_runner import ExperimentRunSummary, run_trust_exp
 ## @brief Create results directory if it does not already exist.
 ## @param directory_path Path to results directory.
 def ensure_results_directory(directory_path: str) -> None:
+    """Create the results directory when it does not already exist."""
     os.makedirs(directory_path, exist_ok=True)
 
 
 ## @brief Generate a timestamp string for the current run.
 ## @return Timestamp string formatted as YYYYMMDDHHMMSS.
 def generate_run_timestamp() -> str:
+    """Return the current time as a compact run identifier."""
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     return timestamp
 
@@ -38,6 +42,7 @@ def generate_run_timestamp() -> str:
 ## @param raw_value Raw string value.
 ## @return Safe lowercase path component.
 def sanitize_path_component(raw_value: str) -> str:
+    """Convert a value into a safe, lowercase path component."""
     safe_value = raw_value.strip().lower()
     safe_value = safe_value.replace(" ", "_")
     safe_value = safe_value.replace("-", "_")
@@ -57,6 +62,7 @@ def sanitize_path_component(raw_value: str) -> str:
 ## @param config_file Optional config file path.
 ## @return Config name suitable for batch directory names.
 def get_config_name(config_file: str) -> str:
+    """Derive a batch-friendly name from an optional configuration path."""
     if config_file:
         config_name = Path(config_file).stem
     else:
@@ -76,6 +82,7 @@ def build_batch_name(
     study: str,
     config_file: str,
 ) -> str:
+    """Build a descriptive directory name for an experiment batch."""
     safe_study = sanitize_path_component(study)
     config_name = get_config_name(config_file)
 
@@ -86,6 +93,7 @@ def build_batch_name(
 ## @brief Return the canonical supervisor modes.
 ## @return Ordered list of supervisor modes.
 def get_supervisor_modes() -> List[str]:
+    """Return supervisor modes in their canonical execution order."""
     supervisor_modes = [
         "undertrust",
         "calibrated",
@@ -98,6 +106,7 @@ def get_supervisor_modes() -> List[str]:
 ## @param study_mode Study mode: "standard" or "ablation".
 ## @return Ordered list of autonomy modes.
 def get_autonomy_modes(study_mode: str = "standard") -> List[str]:
+    """Return the autonomy modes required by the selected study."""
     if study_mode == "ablation":
         autonomy_modes = [
             "fixed",
@@ -117,6 +126,7 @@ def get_autonomy_modes(study_mode: str = "standard") -> List[str]:
 ## @brief Load FEMA calibration data once for reuse across all experiment calls.
 ## @return Loaded FEMA calibration data.
 def load_shared_calibration_data():
+    """Load the FEMA calibration data shared by all experiment calls."""
     csv_path = Path("data/raw/us_disaster_declarations.csv")
     calibration_data = load_fema_calibration_data(csv_path)
     return calibration_data
@@ -132,6 +142,7 @@ def generate_results_filepath(
     supervisor_mode: str,
     autonomy_mode: str,
 ) -> str:
+    """Build the results path for one supervisor/autonomy condition."""
     filename = f"{supervisor_mode}_{autonomy_mode}.txt"
     filepath = os.path.join(directory_path, filename)
     return filepath
@@ -152,6 +163,7 @@ def run_and_log_experiment(
     supervisor_mode: str,
     autonomy_mode: str,
 ) -> None:
+    """Run one experiment condition and write its console report to disk."""
     results_filepath = generate_results_filepath(
         directory_path=results_directory,
         supervisor_mode=supervisor_mode,
@@ -182,6 +194,7 @@ def run_and_log_experiment(
 ## @param series Numeric pandas series.
 ## @return Dictionary with count, mean, std, sem, and ci95.
 def compute_mean_std_ci(series: pd.Series) -> Dict[str, float]:
+    """Calculate count, mean, sample deviation, SEM, and a 95% confidence interval."""
     count = int(series.count())
     mean_value = float(series.mean())
 
@@ -214,6 +227,7 @@ def build_seed_level_row(
     seed: int,
     summary: ExperimentRunSummary,
 ) -> Dict[str, float | int | str]:
+    """Convert one experiment summary into a seed-level results row."""
     total_decisions = summary.ai_accepted + summary.ai_overridden
     accept_rate = summary.ai_accepted / total_decisions
     override_rate = summary.ai_overridden / total_decisions
@@ -262,6 +276,7 @@ def build_seed_level_row(
 ## @param raw_dataframe Seed-level results dataframe.
 ## @return Aggregate summary dataframe.
 def build_multi_seed_summary_table(raw_dataframe: pd.DataFrame) -> pd.DataFrame:
+    """Aggregate seed-level metrics by supervisor and autonomy condition."""
     metrics_to_summarize = [
         "mean_executed_utility",
         "accept_rate",
@@ -304,6 +319,7 @@ def build_multi_seed_summary_table(raw_dataframe: pd.DataFrame) -> pd.DataFrame:
 ## @param raw_dataframe Seed-level results dataframe.
 ## @return Paired delta dataframe.
 def build_paired_delta_table(raw_dataframe: pd.DataFrame) -> pd.DataFrame:
+    """Compute adaptive-minus-fixed metric deltas for paired seeds."""
     pivot_df = raw_dataframe.pivot(
         index=["seed", "supervisor_mode"],
         columns="autonomy_mode",
@@ -363,6 +379,7 @@ def build_paired_delta_table(raw_dataframe: pd.DataFrame) -> pd.DataFrame:
 ## @param raw_dataframe Seed-level results dataframe.
 ## @return Ablation delta dataframe.
 def build_ablation_delta_table(raw_dataframe: pd.DataFrame) -> pd.DataFrame:
+    """Compute each non-fixed mode's paired metric deltas from fixed autonomy."""
     metrics_to_compare = [
         "mean_executed_utility",
         "accept_rate",
@@ -416,6 +433,7 @@ def build_ablation_delta_table(raw_dataframe: pd.DataFrame) -> pd.DataFrame:
 ## @param config_path Optional path to JSON configuration file.
 ## @return Resolved SimulationConfig object.
 def load_simulation_config(config_path: str) -> SimulationConfig:
+    """Load supported simulation fields from JSON or return default settings."""
     if not config_path:
         config = SimulationConfig()
     else:
@@ -457,6 +475,7 @@ def run_single_batch(
     study: str,
     config_file: str = "",
 ) -> str:
+    """Run every condition in a single-seed experiment batch."""
     batch_name = build_batch_name(
         run_timestamp=run_timestamp,
         study=study,
@@ -522,6 +541,7 @@ def run_multi_seed_batch(
     study: str,
     config_file: str = "",
 ) -> str:
+    """Run paired conditions across seeds and save aggregate result tables."""
     batch_name = build_batch_name(
         run_timestamp=run_timestamp,
         study=study,
@@ -625,6 +645,7 @@ def build_run_metadata(
     seed_start: int | None = None,
     config_file: str = "",
 ) -> Dict[str, object]:
+    """Describe an experiment batch and the environment that produced it."""
     metadata: Dict[str, object] = {
         "run_timestamp": run_timestamp,
         "generated_at": datetime.now().isoformat(),
@@ -654,6 +675,7 @@ def write_run_metadata(
     batch_directory: str,
     metadata: Dict[str, object],
 ) -> None:
+    """Write an experiment batch's metadata to ``metadata.json``."""
     metadata_path = os.path.join(batch_directory, "metadata.json")
 
     with open(metadata_path, "w") as metadata_file:
@@ -666,6 +688,7 @@ def write_run_metadata(
 ## @param mode Experiment mode.
 ## @param batch_directory Completed batch directory.
 def run_visualization_script(mode: str, batch_directory: str) -> None:
+    """Generate the appropriate figures for a completed experiment batch."""
     if mode == "single-seed":
         script_path = "analysis/generate_results_visuals.py"
     else:
@@ -685,6 +708,7 @@ def run_visualization_script(mode: str, batch_directory: str) -> None:
 ## @brief Parse command-line arguments.
 ## @return Parsed argument namespace.
 def parse_arguments() -> argparse.Namespace:
+    """Parse command-line options for an experiment run."""
     parser = argparse.ArgumentParser(
         description="Run single-seed or multi-seed HMT experiments.",
     )
@@ -742,6 +766,7 @@ def parse_arguments() -> argparse.Namespace:
 
 ## @brief Program entry point.
 def main() -> None:
+    """Run the requested experiment batch and optional visualization step."""
     arguments = parse_arguments()
     # config = SimulationConfig()
     config = load_simulation_config(arguments.config_file)

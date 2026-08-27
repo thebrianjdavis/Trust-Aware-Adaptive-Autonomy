@@ -13,6 +13,7 @@ from src.simulation import experiment_runner
 
 @pytest.fixture
 def calibration_data() -> FemaCalibrationData:
+    """Provide a deterministic one-category calibration distribution."""
     return FemaCalibrationData(["Fire"], [1.0], [1])
 
 
@@ -30,6 +31,7 @@ def test_zero_episode_summary_selects_policy_and_uses_zero_means(
     expected_mode: str,
     calibration_data: FemaCalibrationData,
 ) -> None:
+    """Verify empty runs select a valid policy and report zero-valued means."""
     summary = experiment_runner.run_trust_experiment(
         config=SimulationConfig(),
         num_episodes=0,
@@ -54,6 +56,7 @@ def test_calibration_data_is_loaded_when_not_supplied(
     monkeypatch: pytest.MonkeyPatch,
     calibration_data: FemaCalibrationData,
 ) -> None:
+    """Verify calibration data is loaded when the caller does not provide it."""
     loader = Mock(return_value=calibration_data)
     monkeypatch.setattr(experiment_runner, "load_fema_calibration_data", loader)
 
@@ -72,6 +75,7 @@ def test_adaptive_experiment_tracks_all_outcomes_and_strengths(
     calibration_data: FemaCalibrationData,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
+    """Verify adaptive runs summarize wins, choices, strengths, and output."""
     episode = Episode([], [], 0)
     baseline_plan = Plan("baseline")
     ai_plan = Plan("ai")
@@ -104,6 +108,7 @@ def test_adaptive_experiment_tracks_all_outcomes_and_strengths(
     decisions = iter([False, False, True])
 
     def accept_in_sequence(self: object, **kwargs: object) -> bool:
+        """Return the next deterministic supervisor decision."""
         return next(decisions)
 
     monkeypatch.setattr(
@@ -149,6 +154,7 @@ def test_fixed_experiment_always_logs_normal_recommendation(
     monkeypatch: pytest.MonkeyPatch,
     calibration_data: FemaCalibrationData,
 ) -> None:
+    """Verify fixed runs record only normal-strength recommendations."""
     episode = Episode([], [], 0)
     monkeypatch.setattr(experiment_runner, "generate_episode", Mock(return_value=episode))
     monkeypatch.setattr(

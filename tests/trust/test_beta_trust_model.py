@@ -20,6 +20,7 @@ def test_update_applies_win_loss_or_tie(
     expected_alpha: float,
     expected_beta: float,
 ) -> None:
+    """Verify trust updates treat positive, negative, and tied comparisons correctly."""
     model = BetaTrustModel()
 
     model.update(comparison_result)
@@ -29,6 +30,7 @@ def test_update_applies_win_loss_or_tie(
 
 
 def test_trust_score_and_variance_match_beta_distribution() -> None:
+    """Verify trust mean and variance follow the Beta distribution formulas."""
     model = BetaTrustModel(alpha=3.0, beta=2.0)
 
     assert model.get_trust_score() == pytest.approx(0.6)
@@ -44,4 +46,5 @@ def test_compare_utilities(
     baseline_utility: int,
     expected: int,
 ) -> None:
+    """Verify utility comparisons distinguish AI wins, losses, and ties."""
     assert BetaTrustModel().compare_utilities(ai_utility, baseline_utility) == expected

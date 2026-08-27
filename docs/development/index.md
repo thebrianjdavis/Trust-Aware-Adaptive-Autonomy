@@ -70,6 +70,19 @@ Test modules follow a one-to-one naming convention. Source code at
 `tests/test_source_layout.py` enforces this mapping, so CI identifies a missing
 test module as soon as a new source module is introduced.
 
+## Document Python code and tests
+
+Every tracked Python module, class, method, function, fixture, helper, and test
+must have a Python docstring. Test docstrings should state the behavior being
+verified, while implementation docstrings should describe the object's purpose
+and contract. Use a string literal immediately inside the object rather than a
+regular comment so Python, `help()`, IDEs, and mkdocstrings can discover it.
+
+`tests/test_documentation.py` scans every tracked Python file with the standard
+library AST. The normal `python -m pytest` command—and therefore the `Unit tests`
+CI check—fails with the file, line, object type, and name when documentation is
+missing.
+
 ## Build the documentation
 
 ```bash

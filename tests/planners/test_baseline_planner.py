@@ -8,6 +8,7 @@ def test_build_asset_occupancy_map(
     medical_asset: Asset,
     logistics_asset: Asset,
 ) -> None:
+    """Verify that every asset receives an independent occupancy set."""
     occupancy = baseline_planner.build_asset_occupancy_map(
         [medical_asset, logistics_asset]
     )
@@ -17,6 +18,7 @@ def test_build_asset_occupancy_map(
 
 
 def test_get_candidate_start_times(medical_incident: Incident) -> None:
+    """Verify candidate starts span the incident's feasible window."""
     assert baseline_planner.get_candidate_start_times(medical_incident) == [1, 2, 3, 4]
 
 
@@ -24,6 +26,7 @@ def test_assignment_is_feasible(
     medical_incident: Incident,
     medical_asset: Asset,
 ) -> None:
+    """Verify acceptance of a compatible assignment with open time slots."""
     assert baseline_planner.is_assignment_feasible(
         medical_incident,
         medical_asset,
@@ -36,6 +39,7 @@ def test_assignment_rejects_incompatible_asset(
     medical_incident: Incident,
     logistics_asset: Asset,
 ) -> None:
+    """Verify rejection of an asset without the required capability."""
     assert not baseline_planner.is_assignment_feasible(
         medical_incident,
         logistics_asset,
@@ -45,6 +49,7 @@ def test_assignment_rejects_incompatible_asset(
 
 
 def test_assignment_rejects_unavailable_slots(medical_incident: Incident) -> None:
+    """Verify rejection when the asset is unavailable during the assignment."""
     asset = Asset("A1", {"medical"}, {1})
 
     assert not baseline_planner.is_assignment_feasible(
@@ -59,6 +64,7 @@ def test_assignment_rejects_occupied_slots(
     medical_incident: Incident,
     medical_asset: Asset,
 ) -> None:
+    """Verify rejection when the assignment overlaps occupied slots."""
     assert not baseline_planner.is_assignment_feasible(
         medical_incident,
         medical_asset,
@@ -71,6 +77,7 @@ def test_assigns_first_feasible_option(
     medical_incident: Incident,
     medical_asset: Asset,
 ) -> None:
+    """Verify assignment chooses the earliest feasible option."""
     plan = Plan("baseline")
     occupancy = {"A1": {1}}
 
@@ -91,6 +98,7 @@ def test_leaves_infeasible_incident_unassigned(
     medical_incident: Incident,
     logistics_asset: Asset,
 ) -> None:
+    """Verify an incident remains unassigned when no asset is feasible."""
     plan = Plan("baseline")
 
     assert not baseline_planner.assign_incident_if_possible(
@@ -103,6 +111,7 @@ def test_leaves_infeasible_incident_unassigned(
 
 
 def test_plan_prioritizes_high_value_incidents(medical_asset: Asset) -> None:
+    """Verify that baseline planning schedules higher-value incidents first."""
     low_priority = Incident("low", 5, 2, 0, 2, 1.0, "medical")
     high_priority = Incident("high", 20, 2, 0, 2, 1.0, "medical")
     episode = Episode([low_priority, high_priority], [medical_asset], 10)
